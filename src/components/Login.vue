@@ -35,7 +35,7 @@ import Cookie from "js-cookie";
 import qs from "qs";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:8086";
+//axios.defaults.baseURL = "http://localhost:8086";
 
 export default {
   name: "Login",
@@ -53,7 +53,7 @@ export default {
       const that = this;
       axios
         .post(
-          "/login",
+          "/api/login",
           qs.stringify({
             user: this.loginInfo.account,
             password: this.loginInfo.password
@@ -67,8 +67,9 @@ export default {
             var overdue = new Date();
             overdue.setTime(overdue.getTime() + 60 * 1000); // 设置cookie过期时间为1min
             Cookie.set("token", token, { expires: overdue });
+            console.log("登录成功！")
           } else{
-            alert(response.data.message)
+            that.$message.error("账号或密码错误！")
           }
           // var $cookie = this.$cookie
           // this.$cookie.set('token', $result.data.token)
@@ -88,7 +89,7 @@ export default {
       alert("info test2!");
       axios
         .post(
-          "/info",
+          "/api/info",
           {}
         )
         .then(function(response){
@@ -100,7 +101,7 @@ export default {
       alert("info test!");
       axios
         .post(
-          "/info",
+          "/api/info",
           {},
           {
             headers:{
@@ -110,7 +111,7 @@ export default {
           }
         )
         .then(function(response){
-          alert("in")
+          alert(response.data.data)
         })
         .catch(response => {
           this.$message.error("未知网络错误！");
