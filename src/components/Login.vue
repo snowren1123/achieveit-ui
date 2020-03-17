@@ -1,31 +1,39 @@
 <template>
-  <div class="login">
-    <h1>登录</h1>
-    <el-form :model="loginInfo" ref="loginInfo" label-width="100px" class="demo-dynamic center-set">
-      <el-form-item
-        prop="account"
-        label="账号"
-        :rules="{ 
+  <div id="pic">
+    <img src="../assets/logo.png" />
+    <div class="login">
+      <h1>登录</h1>
+      <el-form
+        :model="loginInfo"
+        ref="loginInfo"
+        label-width="100px"
+        class="demo-dynamic center-set"
+      >
+        <el-form-item
+          prop="account"
+          label="账号"
+          :rules="{ 
         required: true, message: '请输入您的账号', trigger: 'blur' 
     }"
-      >
-        <el-input v-model="loginInfo.account"></el-input>
-      </el-form-item>
-      <el-form-item
-        prop="password"
-        label="密码"
-        :rules="{
+        >
+          <el-input v-model="loginInfo.account"></el-input>
+        </el-form-item>
+        <el-form-item
+          prop="password"
+          label="密码"
+          :rules="{
       required: true, message: '密码不能为空', trigger: 'blur'
     }"
-      >
-        <el-input v-model="loginInfo.password" show-password></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm()">确认</el-button>
-        <el-button @click="addDomain()">注册</el-button>
-        <el-button @click="resetForm()">忘记密码</el-button>
-      </el-form-item>
-    </el-form>
+        >
+          <el-input v-model="loginInfo.password" show-password></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm()">确认</el-button>
+          <el-button @click="addDomain()">注册</el-button>
+          <el-button @click="resetForm()">忘记密码</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -42,15 +50,13 @@ export default {
   data() {
     return {
       loginInfo: {
-        account: "",
-        password: ""
+        account: "robert11@qq.com",
+        password: "123456"
       }
     };
   },
   methods: {
     submitForm() {
-      //console.log(this.loginInfo.account);
-      const that = this;
       axios
         .post(
           "/api/login",
@@ -59,17 +65,17 @@ export default {
             password: this.loginInfo.password
           })
         )
-        .then(function(response) {
-          // alert('in')
-          // alert(response.data.data.token)
+        .then(response => {
           if (response.data.code === 0) {
             var token = response.data.data.token;
             var overdue = new Date();
             overdue.setTime(overdue.getTime() + 60 * 1000); // 设置cookie过期时间为1min
+            console.log(token);
             Cookie.set("token", token, { expires: overdue });
-            console.log("登录成功！")
-          } else{
-            that.$message.error("账号或密码错误！")
+            this.$message.success("登录成功");
+            this.$router.push("/home");
+          } else {
+            this.$message.error("账号或密码错误！");
           }
           // var $cookie = this.$cookie
           // this.$cookie.set('token', $result.data.token)
@@ -87,14 +93,9 @@ export default {
 
     resetForm() {
       alert("info test2!");
-      axios
-        .post(
-          "/api/info",
-          {}
-        )
-        .then(function(response){
-          alert("in");
-        })
+      axios.post("/api/info", {}).then(function(response) {
+        alert("in");
+      });
     },
 
     addDomain() {
@@ -104,14 +105,14 @@ export default {
           "/api/info",
           {},
           {
-            headers:{
-              'Access-Control-Allow-Origin': 'http://localhost:8080',
-              'Authorization': 'Bearer ' + Cookie.get('token')
+            headers: {
+              "Access-Control-Allow-Origin": "http://localhost:8080",
+              Authorization: "Bearer " + Cookie.get("token")
             }
           }
         )
-        .then(function(response){
-          alert(response.data.data)
+        .then(function(response) {
+          alert(response.data.data);
         })
         .catch(response => {
           this.$message.error("未知网络错误！");
@@ -124,6 +125,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#pic {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 h1,
 h2 {
   font-weight: normal;
