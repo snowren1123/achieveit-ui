@@ -111,7 +111,7 @@ export default {
       this.dialogFormVisible = false;
     },
     hreftoInfo() {
-      this.$router.push("/projinfo");
+      this.$router.push("/project");
     }
   }
 };
