@@ -74,7 +74,13 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      id: ""
+    };
+  },
+  created() {
+    if (!this.id) this.id = this.$route.query.id;
+    console.log(this.id);
   },
   methods: {
     handleOpen(key, keyPath) {
