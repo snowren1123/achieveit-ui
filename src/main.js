@@ -13,6 +13,11 @@ Vue.prototype.$cookie = Cookie
 
 Vue.config.productionTip = false
 
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = "Bearer " + Cookie.get("token")
+  return config // 返回请求对象
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

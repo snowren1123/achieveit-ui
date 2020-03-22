@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       loginInfo: {
-        account: "robert11@qq.com",
+        account: "1730889216@qq.com",
         password: "123456"
       }
     };
@@ -69,53 +69,18 @@ export default {
           if (response.data.code === 0) {
             var token = response.data.data.token;
             var overdue = new Date();
-            overdue.setTime(overdue.getTime() + 60 * 1000); // 设置cookie过期时间为1min
+            overdue.setTime(overdue.getTime() + 60 * 60 * 1000); // 设置cookie过期时间为60min
             console.log(token);
+
             Cookie.set("token", token, { expires: overdue });
             this.$message.success("登录成功");
             this.$router.push("/home");
           } else {
             this.$message.error("账号或密码错误！");
           }
-          // var $cookie = this.$cookie
-          // this.$cookie.set('token', $result.data.token)
-          // alert('this' + $result.data.token)
-          // Headers:{
-          //   // Authorization: this.$cookie.get('token')
-          //   Authorization: response.data.token
-          // }
         })
         .catch(response => {
           this.$message.error("未知网络错误!");
-          console.log("请求失败：" + response);
-        });
-    },
-
-    resetForm() {
-      alert("info test2!");
-      axios.post("/api/info", {}).then(function(response) {
-        alert("in");
-      });
-    },
-
-    addDomain() {
-      alert("info test!");
-      axios
-        .post(
-          "/api/info",
-          {},
-          {
-            headers: {
-              "Access-Control-Allow-Origin": "http://localhost:8080",
-              Authorization: "Bearer " + Cookie.get("token")
-            }
-          }
-        )
-        .then(function(response) {
-          alert(response.data.data);
-        })
-        .catch(response => {
-          this.$message.error("未知网络错误！");
           console.log("请求失败：" + response);
         });
     }
