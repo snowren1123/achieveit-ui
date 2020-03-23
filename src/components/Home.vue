@@ -34,14 +34,11 @@
           <el-table :data="projectsList" border stripe>
             <el-table-column label="项目列表">
               <template slot-scope="scope">
-                <el-row :gutter="20">
+                <el-row :gutter="500">
                   <el-col :span="1"></el-col>
                   <el-col :span="12">项目名称：{{scope.row.projectName}}</el-col>
                   <el-col :span="12">项目周期：{{scope.row.expStartDate}} 至 {{scope.row.expEndDate}}</el-col>
                   <el-col :span="1"></el-col>
-                </el-row>
-                <el-row>
-                  <el-col>采用技术：{{scope.row.technology}}</el-col>
                 </el-row>
                 <el-row>
                   <el-col>业务领域：{{scope.row.businessDomain}}</el-col>
@@ -49,9 +46,12 @@
                 <el-row>
                   <el-col>主要功能：{{scope.row.mainFunctions}}</el-col>
                 </el-row>
+                <el-row>
+                  <el-col>采用技术：{{scope.row.technology}}</el-col>
+                </el-row>
                 <el-button
                   type="info"
-                  icon="el-icon-message"
+                  icon="el-icon-more"
                   class="to-detail"
                   @click="toProjectDetail(scope.row.projectId)"
                   circle
@@ -288,9 +288,10 @@ export default {
 }
 
 .to-detail {
+  background-color: #909399;
   position: absolute;
-  right: 0;
-  top: 50%;
+  right: 10px;
+  top: 70%;
   transform: translateY(-50%);
 }
 

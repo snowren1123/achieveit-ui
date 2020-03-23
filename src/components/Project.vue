@@ -1,6 +1,12 @@
 <template>
-  <el-container style="height: 500px; border: 1px solid #eee">
-    <el-header>项目名称</el-header>
+  <el-container>
+    <el-header>
+      <div>
+        <span>项目名称</span>
+      </div>
+      <el-button type="danger" icon="el-icon-sunny" class="right-set" @click="backToHome" circle></el-button>
+    </el-header>
+
     <el-container>
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <el-menu
@@ -16,11 +22,11 @@
             </template>
             <el-menu-item-group>
               <template slot="title">基本信息</template>
-              <el-menu-item index="/project/info">选项1</el-menu-item>
-              <el-menu-item index="/project/two">选项2</el-menu-item>
+              <el-menu-item index="/project/basic">属性信息</el-menu-item>
+              <el-menu-item index="/project/client">客户信息</el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group title="成员信息">
-              <el-menu-item index="1-3">选项3</el-menu-item>
+            <el-menu-item-group title="项目组成员">
+              <el-menu-item index="/project/team">成员信息</el-menu-item>
             </el-menu-item-group>
             <el-submenu index="1-4">
               <template slot="title">选项4</template>
@@ -67,7 +73,6 @@
       <router-view></router-view>
     </el-container>
 
-    <el-footer>footer</el-footer>
   </el-container>
 </template>
 
@@ -88,6 +93,9 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    backToHome(){
+      this.$router.push('/home');
     }
   }
 };
@@ -100,7 +108,27 @@ export default {
   line-height: 60px;
 }
 
-.el-aside {
-  color: #333;
+.el-container {
+  height: 100%;
+}
+
+.el-header div {
+  display: flex;
+  align-items: center;
+}
+
+.right-set {
+  position: absolute;
+  right: 2%;
+  top: 10px;
+}
+
+.el-table-column {
+  position: relative;
+}
+
+p {
+  font-size: 13px;
+  line-height: 1.7;
 }
 </style>

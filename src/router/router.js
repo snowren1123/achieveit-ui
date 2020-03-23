@@ -5,7 +5,8 @@ import Home from '../components/Home.vue'
 import Project from '../components/Project.vue'
 
 import BasicInfo from '../components/BasicInfo.vue'
-import Two from '../components/two.vue'
+import ClientInfo from '../components/ClientInfo.vue'
+import TeamInfo from '../components/TeamInfo.vue'
 
 Vue.use(Router)
 
@@ -29,12 +30,16 @@ export default new Router({
             component: Project,
             children: [
                 {
-                    path: 'Info',
+                    path: 'Basic',
                     component: BasicInfo
                 },
                 {
-                    path: 'Two',
-                    component: Two
+                    path: 'Client',
+                    component: ClientInfo
+                },
+                {
+                    path: 'Team',
+                    component: TeamInfo
                 }
             ]
         }
