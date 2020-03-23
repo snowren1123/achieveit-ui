@@ -10,13 +10,13 @@
         class="demo-dynamic center-set"
       >
         <el-form-item
-          prop="account"
+          prop="user"
           label="账号"
           :rules="{ 
         required: true, message: '请输入您的账号', trigger: 'blur' 
     }"
         >
-          <el-input v-model="loginInfo.account"></el-input>
+          <el-input v-model="loginInfo.user"></el-input>
         </el-form-item>
         <el-form-item
           prop="password"
@@ -50,21 +50,15 @@ export default {
   data() {
     return {
       loginInfo: {
-        account: "1730889216@qq.com",
-        password: "123456"
+        user: "542581960@qq.com",
+        password: "abcd333"
       }
     };
   },
   methods: {
     submitForm() {
       axios
-        .post(
-          "/api/login",
-          qs.stringify({
-            user: this.loginInfo.account,
-            password: this.loginInfo.password
-          })
-        )
+        .post("/api/login", qs.stringify(this.loginInfo))
         .then(response => {
           if (response.data.code === 0) {
             var token = response.data.data.token;

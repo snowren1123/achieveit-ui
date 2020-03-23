@@ -69,6 +69,8 @@
           label-width="100px"
           label-position="left"
           :rules="addDialogFormRules"
+          ref="addDialogFormRef"
+          @close="addDialogClosed"
         >
           <el-form-item label="项目ID" prop="projectId">
             <el-select v-model="projectInfo.projectId" clearable placeholder="请选择项目ID">
@@ -83,23 +85,27 @@
               <el-option v-for="item in clientIds" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="项目周期" prop="Date">
+          <el-form-item label="项目周期" required>
             <el-col :span="11">
-              <el-date-picker
-                type="date"
-                placeholder="预定日期"
-                v-model="projectInfo.expStartDate"
-                style="width: 100%;"
-              ></el-date-picker>
+              <el-form-item prop="expStartDate">
+                <el-date-picker
+                  type="date"
+                  placeholder="预定日期"
+                  v-model="projectInfo.expStartDate"
+                  style="width: 100%;"
+                ></el-date-picker>
+              </el-form-item>
             </el-col>
             <el-col class="line" :span="1" style="text-align:center">-</el-col>
             <el-col :span="11">
-              <el-date-picker
-                type="date"
-                placeholder="交付日"
-                v-model="projectInfo.expEndDate"
-                style="width: 100%;"
-              ></el-date-picker>
+              <el-form-item prop="expEndDate">
+                <el-date-picker
+                  type="date"
+                  placeholder="交付日"
+                  v-model="projectInfo.expEndDate"
+                  style="width: 100%;"
+                ></el-date-picker>
+              </el-form-item>
             </el-col>
           </el-form-item>
           <el-form-item label="采用技术">
@@ -138,6 +144,7 @@
 
 <script>
 import axios from "axios";
+import qs from "qs";
 
 export default {
   data() {
@@ -149,17 +156,6 @@ export default {
         address: "上海市普陀区金沙江路"
       },
       projectsList: [
-        {
-          projectId: "2020-a5df-D-01",
-          projectName: "智趣识图",
-          clientId: "pwc_001",
-          expStartDate: "2020-03-25",
-          expEndDate: "2020-05-13",
-          technology:
-            "包括编程语言，开发平台（OS+DB ），服务架构 Framework ，使用的工具等",
-          businessDomain: "项目涉及的业务领域",
-          mainFunctions: "项目完成的主要业务功能"
-        },
         {
           projectId: "2020-a5df-D-01",
           projectName: "智趣识图",
@@ -185,12 +181,30 @@ export default {
       addDialogFormVisible: false,
       addDialogFormRules: {
         projectId: [
-          { required: true, message: "请选择项目ID", trigger: "blur" }
+          { required: true, message: "请选择项目ID", trigger: "change" }
         ],
         projectName: [
           { required: true, message: "请输入项目名称", trigger: "blur" }
         ],
-        clientId: [{ required: true, message: "请选择客户ID", trigger: "blur" }]
+        clientId: [
+          { required: true, message: "请选择客户ID", trigger: "change" }
+        ],
+        expStartDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择开始时间",
+            trigger: "change"
+          }
+        ],
+        expEndDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择开始时间",
+            trigger: "change"
+          }
+        ]
       },
       projectsIds: [],
       clientIds: []
@@ -201,7 +215,22 @@ export default {
   },
   methods: {
     submitForm() {
-      this.addDialogFormVisible = false;
+      this.$refs.addDialogFormRef.validate(async valid => {
+        if (!valid) return;
+        var proInfo = this.deepClone(this.projectInfo);
+        proInfo.expStartDate = this.dateFormat(proInfo.expStartDate);
+        proInfo.expEndDate = this.dateFormat(proInfo.expEndDate);
+
+        axios.post("/api/newproject", qs.stringify(proInfo)).then(response => {
+          if (response.data.code === 0) {
+            console.log(response);
+            this.$message.success("新建项目成功！");
+          } else {
+            this.$message.error("新建项目失败！");
+          }
+        });
+        this.addDialogFormVisible = false;
+      });
     },
     toProjectDetail(id) {
       this.$router.push({ path: "/project", query: { id: id } });
@@ -225,6 +254,25 @@ export default {
         }
       });
       this.addDialogFormVisible = true;
+    },
+    addDialogClosed: function() {
+      this.$refs.addFormRef.resetFields();
+    },
+    dateFormat: function(originVal) {
+      const dt = new Date(originVal);
+      const y = dt.getFullYear();
+      const m = (dt.getMonth() + 1 + "").padStart(2, "0");
+      const d = (dt.getDate() + "").padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    },
+    deepClone: function(data) {
+      var obj = {};
+
+      for (var key in data) {
+        obj[key] = data[key];
+      }
+
+      return obj;
     }
   }
 };
