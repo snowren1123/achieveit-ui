@@ -13,6 +13,7 @@ Vue.prototype.$cookie = Cookie
 
 Vue.config.productionTip = false
 
+axios.defaults.baseURL = (process.env.NODE_ENV === 'development') ? '/api' : process.env.BASE_API;
 axios.interceptors.request.use(config => {
   config.headers.Authorization = "Bearer " + Cookie.get("token")
   return config // 返回请求对象

@@ -43,7 +43,8 @@ import Cookie from "js-cookie";
 import qs from "qs";
 
 axios.defaults.withCredentials = true;
-//axios.defaults.baseURL = "http://localhost:8086";
+//axios.defaults.baseURL = process.env.BASE_API
+//axios.defaults.baseURL = "http://47.101.150.198:8086"
 
 export default {
   name: "Login",
@@ -58,7 +59,7 @@ export default {
   methods: {
     submitForm() {
       axios
-        .post("/api/login", qs.stringify(this.loginInfo))
+        .post("/login", qs.stringify(this.loginInfo))
         .then(response => {
           if (response.data.code === 0) {
             var token = response.data.data.token;
