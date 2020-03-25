@@ -223,7 +223,7 @@ export default {
         proInfo.expStartDate = this.dateFormat(proInfo.expStartDate);
         proInfo.expEndDate = this.dateFormat(proInfo.expEndDate);
 
-        axios.post("/newproject", qs.stringify(proInfo)).then(response => {
+        axios.post("/api/newproject", qs.stringify(proInfo)).then(response => {
           if (response.data.code === 0) {
             console.log(response);
             this.$message.success("新建项目成功！");
@@ -239,7 +239,7 @@ export default {
     },
     getProjectsList() {},
     addProject() {
-      axios.get("/newproject/ids").then(response => {
+      axios.get("/api/newproject/ids").then(response => {
         if (response.data.code === 0) {
           console.log(response.data.data);
           this.projectsIds = response.data.data.ids;
@@ -247,7 +247,7 @@ export default {
           this.$message.error("获取可选项目ID失败！");
         }
       });
-      axios.get("/client/ids").then(response => {
+      axios.get("/api/client/ids").then(response => {
         if (response.data.code === 0) {
           console.log(response.data.data);
           this.clientIds = response.data.data.clientIds;
