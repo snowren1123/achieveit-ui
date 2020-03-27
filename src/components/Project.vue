@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <div>
-        <span>{{ detailInfo.projectName }}</span>
+        <span>{{ projectName }}</span>
       </div>
       <el-button type="danger" icon="el-icon-sunny" class="right-set" @click="backToHome" circle></el-button>
     </el-header>
@@ -82,20 +82,12 @@ import qs from "qs"
 export default {
   data() {
     return {
-      detailInfo: {
-        projectId: "",
-        projectName: "",
-        clientId: "",
-        expStartDate: "",
-        expEndDate: "",
-        technology: "",
-        businessDomain: "",
-        mainFunctions: ""
-      }
+      projectName: ""
     };
   },
   created() {
-    this.getDetailInfo();
+    this.$store.commit("setProjectBasicId", this.$route.query.id);
+    this.getProjectName();
     // if (!this.detailInfo.projectId) this.detailInfo.projectId = this.$route.query.id;
     // console.log(this.detailInfo.projectId);
   },
@@ -109,13 +101,12 @@ export default {
     backToHome(){
       this.$router.push('/home');
     },
-    getDetailInfo(){
-      axios.get("/api/project_info/2020-a5df-D-01").then(response => {
-        if(response.data.code === 0){
-          console.log("success");
-          // this.$data.detailInfo = response.data.data;
+    getProjectName() {
+      axios.get("/api/project_info/" + this.$route.query.id).then(response => {
+        if (response.data.code === 0) {
+          this.projectName = response.data.data.projectName;       
         }
-    });
+      });
     }
   }
 };

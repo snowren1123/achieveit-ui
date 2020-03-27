@@ -5,11 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        personId: {}
+        personId: {},
+        projectBasicId: {}
     },
     mutations: {
         setUserId(state, personId) {
             state.personId = personId;
+        },
+        setProjectBasicId(state, projectId){
+            state.projectBasicId = projectId;
         }
     }
 })

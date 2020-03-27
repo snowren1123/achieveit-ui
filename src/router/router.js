@@ -7,6 +7,8 @@ import Project from '../components/Project.vue'
 import BasicInfo from '../components/BasicInfo.vue'
 import ClientInfo from '../components/ClientInfo.vue'
 import TeamInfo from '../components/TeamInfo.vue'
+import BossPanel from '../components/BossPanel.vue'
+import BossPending from '../components/BossPending.vue'
 
 Vue.use(Router)
 
@@ -24,6 +26,16 @@ export default new Router({
         {
             path: '/Home',
             component: Home
+        },
+        {
+            path: '/Boss',
+            component: BossPanel,
+            children: [
+                {
+                    path: 'Pending',
+                    component: BossPending
+                }
+            ]
         },
         {
             path: '/Project',

@@ -28,29 +28,40 @@
 </template>
 
 <script>
+import axios from "axios";
+import qs from "qs";
+import { mapState } from "vuex";
+
 export default {
   data() {
     return {
-      basicInfo: [
-        {
-          projectId: "2020-a5df-D-01",
-          projectName: "智趣识图",
-          clientId: "pwc_001",
-          expStartDate: "2020-03-25",
-          expEndDate: "2020-05-13",
-          technology:
-            "包括编程语言，开发平台（OS+DB ），服务架构 Framework ，使用的工具等",
-          businessDomain: "项目涉及的业务领域",
-          mainFunctions: "项目完成的主要业务功能"
-        }
-      ]
+      basicInfo: []
     };
+  },
+
+  created() {
+    this.getDetailInfo();
+  },
+
+  computed: {
+    ...mapState(["projectBasicId"])
+  },
+
+  methods: {
+    getDetailInfo() {
+      axios.get("/api/project_info/" + this.projectBasicId).then(response => {
+        if (response.data.code === 0) {
+          console.log("success");
+          this.basicInfo = response.data.data;       
+        }
+      });
+    }
   }
 };
 </script>
 
 <style>
-.el-row{
+.el-row {
   margin-bottom: 20px;
 }
 </style>
