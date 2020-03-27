@@ -42,10 +42,12 @@
           <el-table :data="projectsList" border stripe>
             <el-table-column label="项目列表">
               <template slot-scope="scope">
-                <el-row :gutter="500">
+                <el-row :gutter="50">
                   <el-col :span="1"></el-col>
                   <el-col :span="12">项目名称：{{scope.row.projectName}}</el-col>
-                  <el-col :span="12">项目周期：{{scope.row.expStartDate}} 至 {{scope.row.expEndDate}}</el-col>
+                  <el-col
+                    :span="12"
+                  >项目周期：{{scope.row.expStartDate.slice(0,10)}} 至 {{scope.row.expEndDate.slice(0,10)}}</el-col>
                   <el-col :span="1"></el-col>
                 </el-row>
                 <el-row>
@@ -71,14 +73,13 @@
       </el-main>
 
       <!-- 新建项目对话框 -->
-      <el-dialog title="新建项目" :visible.sync="addDialogFormVisible">
+      <el-dialog title="新建项目" :visible.sync="addDialogFormVisible" @close="addDialogClosed">
         <el-form
           :model="projectInfo"
           label-width="100px"
           label-position="left"
           :rules="addDialogFormRules"
           ref="addDialogFormRef"
-          @close="addDialogClosed"
         >
           <el-form-item label="项目ID" prop="projectId">
             <el-select v-model="projectInfo.projectId" clearable placeholder="请选择项目ID">
@@ -161,19 +162,7 @@ export default {
   data() {
     return {
       personInfo: {},
-      projectsList: [
-        {
-          projectId: "2020-a5df-D-01",
-          projectName: "智趣识图",
-          clientId: "pwc_001",
-          expStartDate: "2020-03-25",
-          expEndDate: "2020-05-13",
-          technology:
-            "包括编程语言，开发平台（OS+DB ），服务架构 Framework ，使用的工具等",
-          businessDomain: "项目涉及的业务领域",
-          mainFunctions: "项目完成的主要业务功能"
-        }
-      ],
+      projectsList: [],
       projectInfo: {
         projectId: "",
         projectName: "",
@@ -241,8 +230,9 @@ export default {
         proInfo.expEndDate = this.dateFormat(proInfo.expEndDate);
 
         axios.post("/api/newproject", qs.stringify(proInfo)).then(response => {
+          console.log(response);
           if (response.data.code === 0) {
-            console.log(response);
+            this.getProjectsList();
             this.$message.success("新建项目成功！");
           } else {
             this.$message.error("新建项目失败！");
@@ -257,8 +247,8 @@ export default {
     getProjectsList() {
       axios.get("/api/project_infos").then(response => {
         console.log(response.data);
-        if(response.data.code === 0) {
-          console.log(response.data.data);
+        if (response.data.code === 0) {
+          this.projectsList = response.data.data;
         } else {
           this.$message.error("获取项目列表失败！");
         }
@@ -284,7 +274,7 @@ export default {
       this.addDialogFormVisible = true;
     },
     addDialogClosed: function() {
-      this.$refs.addFormRef.resetFields();
+      this.$refs.addDialogFormRef.resetFields();
     },
     dateFormat: function(originVal) {
       const dt = new Date(originVal);
