@@ -237,7 +237,16 @@ export default {
     toProjectDetail(id) {
       this.$router.push({ path: "/project", query: { id: id } });
     },
-    getProjectsList() {},
+    getProjectsList() {
+      axios.get("/api/newproject").then(response => {
+        console.log(response.data);
+        if(response.data.code === 0) {
+          console.log(response.data.data);
+        } else {
+          this.$message.error("获取项目列表失败！");
+        }
+      });
+    },
     addProject() {
       axios.get("/api/newproject/ids").then(response => {
         if (response.data.code === 0) {

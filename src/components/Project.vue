@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <div>
-        <span>项目名称</span>
+        <span>{{ detailInfo.projectName }}</span>
       </div>
       <el-button type="danger" icon="el-icon-sunny" class="right-set" @click="backToHome" circle></el-button>
     </el-header>
@@ -72,20 +72,32 @@
 
       <router-view></router-view>
     </el-container>
-
   </el-container>
 </template>
 
 <script>
+import axios from "axios"
+import qs from "qs"
+
 export default {
   data() {
     return {
-      id: ""
+      detailInfo: {
+        projectId: "",
+        projectName: "",
+        clientId: "",
+        expStartDate: "",
+        expEndDate: "",
+        technology: "",
+        businessDomain: "",
+        mainFunctions: ""
+      }
     };
   },
   created() {
-    if (!this.id) this.id = this.$route.query.id;
-    console.log(this.id);
+    this.getDetailInfo();
+    // if (!this.detailInfo.projectId) this.detailInfo.projectId = this.$route.query.id;
+    // console.log(this.detailInfo.projectId);
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -96,6 +108,14 @@ export default {
     },
     backToHome(){
       this.$router.push('/home');
+    },
+    getDetailInfo(){
+      axios.get("/api/project_info/2020-a5df-D-01").then(response => {
+        if(response.data.code === 0){
+          console.log("success");
+          // this.$data.detailInfo = response.data.data;
+        }
+    });
     }
   }
 };
