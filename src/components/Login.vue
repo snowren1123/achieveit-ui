@@ -68,6 +68,7 @@ export default {
 
             Cookie.set("token", token, { expires: overdue });
             this.$message.success("登录成功");
+            this.$store.commit("setUserId", response.data.data.user.employeeId);
             this.$router.push("/home");
           } else {
             this.$message.error("账号或密码错误！");

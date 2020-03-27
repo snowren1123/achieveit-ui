@@ -6,7 +6,14 @@
         <img src="../assets/logo.png" alt />
         <span>软件项目管理系统</span>
       </div>
-      <el-button type="primary" icon="el-icon-plus" class="right-set" @click="addProject" circle></el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        class="right-set"
+        @click="addProject"
+        circle
+        style="background-color: #b3c0d1;border:0"
+      ></el-button>
     </el-header>
 
     <el-container>
@@ -22,10 +29,11 @@
           </div>
         </div>
 
+        <p>昵称：{{personInfo.employeeName}}</p>
+        <p>职位：{{personInfo.title}}</p>
+        <p>部门：{{personInfo.department}}</p>
+        <p>手机号：{{personInfo.telephone}}</p>
         <p>邮箱：{{personInfo.email}}</p>
-        <p>单位：{{personInfo.company}}</p>
-        <p>手机号：{{personInfo.mobile}}</p>
-        <p>地址：{{personInfo.address}}</p>
       </el-aside>
 
       <!-- 内容主体区域 -->
@@ -145,18 +153,14 @@
 <script>
 import axios from "axios";
 import qs from "qs";
+import { mapState } from "vuex";
 
 //axios.defaults.baseURL = process.env.BASE_API;
 
 export default {
   data() {
     return {
-      personInfo: {
-        email: "onetwe@163.com",
-        company: "华东师范大学",
-        mobile: "18918003231",
-        address: "上海市普陀区金沙江路"
-      },
+      personInfo: {},
       projectsList: [
         {
           projectId: "2020-a5df-D-01",
@@ -213,9 +217,22 @@ export default {
     };
   },
   created() {
+    this.getUserInfo();
     this.getProjectsList();
   },
+  computed: {
+    ...mapState(["personId"])
+  },
   methods: {
+    getUserInfo() {
+      axios.get("/api/employee/" + this.personId).then(response => {
+        if (response.data.code === 0) {
+          this.personInfo = response.data.data;
+        } else {
+          this.$message.error("获取用户信息失败！");
+        }
+      });
+    },
     submitForm() {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
@@ -238,7 +255,7 @@ export default {
       this.$router.push({ path: "/project", query: { id: id } });
     },
     getProjectsList() {
-      axios.get("/api/newproject").then(response => {
+      axios.get("/api/project_infos").then(response => {
         console.log(response.data);
         if(response.data.code === 0) {
           console.log(response.data.data);

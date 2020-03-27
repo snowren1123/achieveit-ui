@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/global.css'
 import App from './App.vue'
 import router from './router/router.js'
+import store from './store/store.js'
 
 Vue.use(ElementUI)
 Vue.prototype.$http = axios
@@ -25,6 +26,7 @@ axios.interceptors.request.use(config => {
 new Vue({
   el: '#app',
   router,
+  store,
   components: {
     App
   },
