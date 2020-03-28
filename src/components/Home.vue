@@ -39,7 +39,11 @@
       <!-- 内容主体区域 -->
       <el-main>
         <el-card shadow="always">
-          <el-table :data="projectsList" border stripe>
+          <el-table
+            :data="projectsList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            border
+            stripe
+          >
             <el-table-column label="项目列表">
               <template slot-scope="scope">
                 <el-row :gutter="50">
@@ -69,6 +73,17 @@
               </template>
             </el-table-column>
           </el-table>
+
+          <!-- 分页区域 -->
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[1, 2, 5, 10]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+          ></el-pagination>
         </el-card>
       </el-main>
 
@@ -202,7 +217,10 @@ export default {
         ]
       },
       projectsIds: [],
-      clientIds: []
+      clientIds: [],
+      currentPage: 1,
+      pageSize: 1,
+      total: 0
     };
   },
   created() {
@@ -241,14 +259,15 @@ export default {
         this.addDialogFormVisible = false;
       });
     },
-    toProjectDetail(id) {
-      this.$router.push({ path: "/project", query: { id: id } });
+    toProjectDetail() {
+      this.$router.push("/project");
     },
     getProjectsList() {
       axios.get("/api/project_infos").then(response => {
         console.log(response.data);
         if (response.data.code === 0) {
           this.projectsList = response.data.data;
+          this.total = this.projectsList.length;
         } else {
           this.$message.error("获取项目列表失败！");
         }
@@ -275,6 +294,14 @@ export default {
     },
     addDialogClosed: function() {
       this.$refs.addDialogFormRef.resetFields();
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      console.log(`当前页: ${val}`);
     },
     dateFormat: function(originVal) {
       const dt = new Date(originVal);
@@ -364,5 +391,9 @@ export default {
 p {
   font-size: 13px;
   line-height: 1.7;
+}
+
+.el-pagination {
+  margin-top: 15px;
 }
 </style>
