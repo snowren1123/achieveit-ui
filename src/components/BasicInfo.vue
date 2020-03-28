@@ -21,6 +21,9 @@
           <el-row>
             <el-col>主要功能：{{scope.row.mainFunctions}}</el-col>
           </el-row>
+          <el-row>
+            <el-col>项目状态：{{scope.row.state}}</el-col>
+          </el-row>
         </template>
       </el-table-column>
     </el-table>
