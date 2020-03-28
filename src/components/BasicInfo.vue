@@ -52,7 +52,7 @@ export default {
       axios.get("/api/project_info/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
           console.log("success");
-          this.basicInfo = response.data.data;       
+          this.basicInfo.push(response.data.data);       
         }
       });
     }

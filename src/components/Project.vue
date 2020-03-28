@@ -78,6 +78,7 @@
 <script>
 import axios from "axios"
 import qs from "qs"
+import { mapState } from "vuex";
 
 export default {
   data() {
@@ -85,12 +86,17 @@ export default {
       projectName: ""
     };
   },
+
   created() {
-    this.$store.commit("setProjectBasicId", this.$route.query.id);
     this.getProjectName();
     // if (!this.detailInfo.projectId) this.detailInfo.projectId = this.$route.query.id;
     // console.log(this.detailInfo.projectId);
   },
+
+  computed: {
+    ...mapState(["projectBasicId"])
+  },
+
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
@@ -102,7 +108,7 @@ export default {
       this.$router.push('/home');
     },
     getProjectName() {
-      axios.get("/api/project_info/" + this.$route.query.id).then(response => {
+      axios.get("/api/project_info/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
           this.projectName = response.data.data.projectName;       
         }

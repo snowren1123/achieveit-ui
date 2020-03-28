@@ -259,8 +259,9 @@ export default {
         this.addDialogFormVisible = false;
       });
     },
-    toProjectDetail() {
+    toProjectDetail(id) {
       this.$router.push("/project");
+      this.$store.commit("setProjectBasicId", id);
     },
     getProjectsList() {
       axios.get("/api/project_infos").then(response => {
