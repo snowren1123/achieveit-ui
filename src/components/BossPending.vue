@@ -22,20 +22,24 @@
             <el-row>
               <el-col>项目状态：{{scope.row.projectBasicInfo.state}}</el-col>
             </el-row>
-            <el-button
-              type="success"
-              icon="el-icon-check"
-              class="approve"
-              @click="approveProject(scope.row.taskId)"
-              circle
-            ></el-button>
-            <el-button
-              type="danger"
-              icon="el-icon-close"
-              class="failed"
-              @click="failProject(scope.row.taskId)"
-              circle
-            ></el-button>
+            <el-tooltip class="item" effect="dark" content="审核通过" placement="top">
+              <el-button
+                type="success"
+                icon="el-icon-check"
+                class="approve"
+                @click="approveProject(scope.row.taskId)"
+                circle
+              ></el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="驳回项目" placement="top">
+              <el-button
+                type="danger"
+                icon="el-icon-close"
+                class="failed"
+                @click="failProject(scope.row.taskId)"
+                circle
+              ></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -72,7 +76,8 @@ export default {
     approveProject(taskId) {
       console.log(taskId);
       axios
-        .put("/api/newproject",
+        .put(
+          "/api/newproject",
           qs.stringify({
             taskId: taskId,
             approval: 1
@@ -80,13 +85,15 @@ export default {
         )
         .then(response => {
           this.$message.success(response.data.data);
+          this.getPendingProjects();
           console.log(response.data);
         });
     },
     failProject(taskId) {
       console.log(taskId);
       axios
-        .put("/api/newproject",
+        .put(
+          "/api/newproject",
           qs.stringify({
             taskId: taskId,
             approval: 0
@@ -94,6 +101,7 @@ export default {
         )
         .then(response => {
           this.$message.warning(response.data.data);
+          this.getPendingProjects();
           console.log(response.data.data);
         });
     }

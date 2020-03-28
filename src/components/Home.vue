@@ -39,6 +39,16 @@
       <!-- 内容主体区域 -->
       <el-main>
         <el-card shadow="always">
+          <!-- 关键字搜索区域 -->
+          <el-row>
+            <el-col :span="8">
+              <el-input placeholder="请输入内容" v-model="keyWord" clearable @clear="getProjectsList">
+                <el-button slot="append" icon="el-icon-search" @click="getListByKeyWord"></el-button>
+              </el-input>
+            </el-col>
+          </el-row>
+
+          <!-- 项目列表区域 -->
           <el-table
             :data="projectsList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             border
@@ -63,13 +73,15 @@
                 <el-row>
                   <el-col>采用技术：{{scope.row.technology}}</el-col>
                 </el-row>
-                <el-button
-                  type="info"
-                  icon="el-icon-more"
-                  class="to-detail"
-                  @click="toProjectDetail(scope.row.projectId)"
-                  circle
-                ></el-button>
+                <el-tooltip class="item" effect="dark" content="项目详情" placement="top">
+                  <el-button
+                    type="info"
+                    icon="el-icon-more"
+                    class="to-detail"
+                    @click="toProjectDetail(scope.row.projectId)"
+                    circle
+                  ></el-button>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -220,7 +232,8 @@ export default {
       clientIds: [],
       currentPage: 1,
       pageSize: 1,
-      total: 0
+      total: 0,
+      keyWord: ""
     };
   },
   created() {
@@ -274,6 +287,20 @@ export default {
         }
       });
     },
+    getListByKeyWord() {
+      if (this.keyWord === "") return;
+      axios
+        .get("/api/project_infos/key_word/" + this.keyWord)
+        .then(response => {
+          console.log(response);
+          if (response.data.code === 0) {
+            this.projectsList = response.data.data;
+            this.total = this.projectsList.length;
+          } else {
+            this.$message.error("查询失败！");
+          }
+        });
+    },
     addProject() {
       axios.get("/api/newproject/ids").then(response => {
         if (response.data.code === 0) {
@@ -298,11 +325,9 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      console.log(`当前页: ${val}`);
     },
     dateFormat: function(originVal) {
       const dt = new Date(originVal);
@@ -377,6 +402,10 @@ export default {
   padding: 0;
 }
 
+.el-table {
+  margin: 15px 0;
+}
+
 .el-table-column {
   position: relative;
 }
@@ -394,7 +423,7 @@ p {
   line-height: 1.7;
 }
 
-.el-pagination {
-  margin-top: 15px;
+.el-card {
+  padding-top: 10px;
 }
 </style>

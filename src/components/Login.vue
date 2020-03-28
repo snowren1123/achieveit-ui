@@ -61,6 +61,7 @@ export default {
         .post("/api/login", qs.stringify(this.loginInfo))
         .then(response => {
           if (response.data.code === 0) {
+            var { user } = response.data.data;
             var token = response.data.data.token;
             var overdue = new Date();
             overdue.setTime(overdue.getTime() + 60 * 60 * 1000); // 设置cookie过期时间为60min
@@ -68,8 +69,10 @@ export default {
 
             Cookie.set("token", token, { expires: overdue });
             this.$message.success("登录成功");
-            this.$store.commit("setUserId", response.data.data.user.employeeId);
-            this.$router.push("/home");
+            this.$store.commit("setUserId", user.employeeId);
+
+            if (user.title === "项目经理") this.$router.push("/home");
+            else if (user.title === "项目上级") this.$router.push("/Boss");
           } else {
             this.$message.error("账号或密码错误！");
           }

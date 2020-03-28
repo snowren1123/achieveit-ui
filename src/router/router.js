@@ -29,6 +29,7 @@ export default new Router({
         },
         {
             path: '/Boss',
+            redirect: '/boss/pending',
             component: BossPanel,
             children: [
                 {
@@ -40,6 +41,7 @@ export default new Router({
         {
             path: '/Project',
             component: Project,
+            redirect: 'project/basic',
             children: [
                 {
                     path: 'Basic',
