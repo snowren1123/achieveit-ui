@@ -6,14 +6,7 @@
         <img src="../assets/logo.png" alt />
         <span>软件项目管理系统</span>
       </div>
-      <el-button
-        type="primary"
-        icon="el-icon-plus"
-        class="right-set"
-        @click="addProject"
-        circle
-        style="background-color: #b3c0d1;border:0"
-      ></el-button>
+      <el-button icon="el-icon-plus" class="right-set" @click="addProject" circle></el-button>
     </el-header>
 
     <el-container>
@@ -56,14 +49,11 @@
           >
             <el-table-column label="项目列表">
               <template slot-scope="scope">
-                <el-row :gutter="50">
-                  <el-col :span="1"></el-col>
-                  <el-col :span="12">项目名称：{{scope.row.projectName}}</el-col>
-                  <el-col
-                    :span="12"
-                  >项目周期：{{scope.row.expStartDate.slice(0,10)}} 至 {{scope.row.expEndDate.slice(0,10)}}</el-col>
-                  <el-col :span="1"></el-col>
-                </el-row>
+                <el-tag type="success" v-if="scope.row.state === '申请立项'">{{scope.row.state}}</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.state === '驳回立项'">{{scope.row.state}}</el-tag>
+                <el-tag v-else>{{scope.row.state}}</el-tag>
+                <el-row>项目名称：{{scope.row.projectName}}</el-row>
+                <el-row>项目周期：{{scope.row.expStartDate.slice(0,10)}} 至 {{scope.row.expEndDate.slice(0,10)}}</el-row>
                 <el-row>
                   <el-col>业务领域：{{scope.row.businessDomain}}</el-col>
                 </el-row>
@@ -91,7 +81,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[1, 2, 5, 10]"
+            :page-sizes="[2, 4, 6, 10]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
@@ -231,7 +221,7 @@ export default {
       projectsIds: [],
       clientIds: [],
       currentPage: 1,
-      pageSize: 1,
+      pageSize: 2,
       total: 0,
       keyWord: ""
     };
@@ -410,10 +400,15 @@ export default {
   position: relative;
 }
 
+.el-tag {
+  position: absolute;
+  right: 10px;
+}
+
 .to-detail {
   background-color: #909399;
   position: absolute;
-  right: 10px;
+  right: 15px;
   top: 70%;
   transform: translateY(-50%);
 }
