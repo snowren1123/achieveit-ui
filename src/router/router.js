@@ -10,6 +10,7 @@ import TeamInfo from '../components/TeamInfo.vue'
 import BossPanel from '../components/BossPanel.vue'
 import BossPending from '../components/BossPending.vue'
 import EPGLeader from '../components/EPGLeader.vue'
+import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
 
@@ -44,6 +45,10 @@ export default new Router({
         {
             path: '/EPGLeader',
             component: EPGLeader
+        },
+        {
+            path: '/QALeader',
+            component: QALeader
         },
         {
             path: '/OrgConfig',

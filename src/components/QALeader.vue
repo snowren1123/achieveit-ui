@@ -59,12 +59,12 @@
                 <el-row>
                   <el-col>采用技术：{{scope.row.projectBasicInfo.technology}}</el-col>
                 </el-row>
-                <el-tooltip class="item" effect="dark" content="分配epg" placement="top">
+                <el-tooltip class="item" effect="dark" content="分配qa" placement="top">
                   <el-button
                     type="success"
                     icon="el-icon-user-solid"
-                    class="add-epg"
-                    @click="addEPG(scope.row.taskId)"
+                    class="add-qa"
+                    @click="addQA(scope.row.taskId)"
                     circle
                   ></el-button>
                 </el-tooltip>
@@ -85,16 +85,16 @@
         </el-card>
       </el-main>
 
-      <!-- 分配epg对话框 -->
-      <el-dialog title="分配epg" :visible.sync="addEPGVisible" @close="addEPGDialogClosed">
+      <!-- 分配qa对话框 -->
+      <el-dialog title="分配qa" :visible.sync="addQAVisible" @close="addQADialogClosed">
         <el-form
-          :model="addEPGForm"
+          :model="addQAForm"
           label-width="100px"
           label-position="left"
-          ref="addEPGDialogFormRef"
+          ref="addQADialogFormRef"
         >
-          <el-form-item label="可选epg" prop="ids">
-            <el-select v-model="addEPGForm.ids" multiple clearable placeholder="请选择">
+          <el-form-item label="可选qa" prop="ids">
+            <el-select v-model="addQAForm.ids" multiple clearable placeholder="请选择">
               <el-option
                 v-for="item in members"
                 :key="item.employeeId"
@@ -106,7 +106,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitForm()">确认</el-button>
-          <el-button @click="addEPGVisible = false">取消</el-button>
+          <el-button @click="addQAVisible = false">取消</el-button>
         </div>
       </el-dialog>
     </el-container>
@@ -127,8 +127,8 @@ export default {
       pageSize: 2,
       total: 0,
       keyWord: "",
-      addEPGVisible: false,
-      addEPGForm: { taskId: "", role: "EPG", ids: [] },
+      addQAVisible: false,
+      addQAForm: { taskId: "", role: "QA", ids: [] },
       members: []
     };
   },
@@ -166,37 +166,37 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
     },
-    addEPGDialogClosed: function() {
-      this.$refs.addEPGDialogFormRef.resetFields();
+    addQADialogClosed: function() {
+      this.$refs.addQADialogFormRef.resetFields();
     },
-    addEPG(taskId) {
-      this.addEPGForm.taskId = taskId;
-      axios.get("/api/employees/epg").then(response => {
+    addQA(taskId) {
+      this.addQAForm.taskId = taskId;
+      axios.get("/api/employees/qa").then(response => {
         if (response.data.code === 0) {
           this.members = response.data.data;
         } else {
-          this.$message.error("获取可选epg失败！");
+          this.$message.error("获取可选qa失败！");
         }
       });
-      this.addEPGVisible = true;
+      this.addQAVisible = true;
     },
     submitForm() {
-      console.log(this.addEPGForm.ids);
+      console.log(this.addQAForm.ids);
       axios
         .put(
           "/api/newproject/member",
-          qs.stringify(this.addEPGForm, { indices: false })
+          qs.stringify(this.addQAForm, { indices: false })
         )
         .then(response => {
           console.log(response);
           if (response.data.code === 0) {
-            this.$message.success("已成功分配epg");
+            this.$message.success("已成功分配qa");
             this.getProjectsList();
           } else {
-            this.$message.error("分配epg失败！");
+            this.$message.error("分配qa失败！");
           }
         });
-      this.addEPGVisible = false;
+      this.addQAVisible = false;
     }
   }
 };
@@ -268,7 +268,7 @@ export default {
   right: 10px;
 }
 
-.add-epg {
+.add-qa {
   position: absolute;
   right: 15px;
   top: 70%;
