@@ -73,8 +73,8 @@ export default {
 
             if (user.title === "项目经理") this.$router.push("/home");
             else if (user.title === "项目上级") this.$router.push("/boss");
-            else if (user.title === "EPG Leader")
-              this.$router.push("/epgleader");
+            else if (user.title === "EPG Leader") this.$router.push("/epgleader");
+            else if (user.title === "组织级配置管理员") this.$router.push("/orgconfig");
           } else {
             this.$message.error("账号或密码错误！");
           }

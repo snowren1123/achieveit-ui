@@ -10,6 +10,8 @@ import TeamInfo from '../components/TeamInfo.vue'
 import BossPanel from '../components/BossPanel.vue'
 import BossPending from '../components/BossPending.vue'
 import EPGLeader from '../components/EPGLeader.vue'
+import OrgConfig from '../components/OrgConfigPanel.vue'
+import OrgGitset from '../components/OrgGitset.vue'
 
 Vue.use(Router)
 
@@ -42,6 +44,17 @@ export default new Router({
         {
             path: '/EPGLeader',
             component: EPGLeader
+        },
+        {
+            path: '/OrgConfig',
+            redirect: '/orgconfig/gitset',
+            component: OrgConfig,
+            children: [
+                {
+                    path: 'Gitset',
+                    component: OrgGitset
+                }
+            ]
         },
         {
             path: '/Project',
