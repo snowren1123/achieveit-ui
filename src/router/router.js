@@ -9,6 +9,7 @@ import ClientInfo from '../components/ClientInfo.vue'
 import TeamInfo from '../components/TeamInfo.vue'
 import BossPanel from '../components/BossPanel.vue'
 import BossPending from '../components/BossPending.vue'
+import EPGLeader from '../components/EPGLeader.vue'
 
 Vue.use(Router)
 
@@ -37,6 +38,10 @@ export default new Router({
                     component: BossPending
                 }
             ]
+        },
+        {
+            path: '/EPGLeader',
+            component: EPGLeader
         },
         {
             path: '/Project',

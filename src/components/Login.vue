@@ -72,7 +72,9 @@ export default {
             this.$store.commit("setUserId", user.employeeId);
 
             if (user.title === "项目经理") this.$router.push("/home");
-            else if (user.title === "项目上级") this.$router.push("/Boss");
+            else if (user.title === "项目上级") this.$router.push("/boss");
+            else if (user.title === "EPG Leader")
+              this.$router.push("/epgleader");
           } else {
             this.$message.error("账号或密码错误！");
           }
