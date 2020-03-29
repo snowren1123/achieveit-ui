@@ -91,7 +91,7 @@ export default {
 }
 
 .el-form-item__content {
-  margin-left: 80px!important;
+  margin-left: 95px!important;
 }
 
 p {

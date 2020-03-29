@@ -22,37 +22,37 @@
             <el-row>
               <el-col>项目状态：{{scope.row.projectBasicInfo.state}}</el-col>
             </el-row>
-            <el-tooltip class="item" effect="dark" content="建立Git库" placement="top">
+            <el-tooltip class="item" effect="dark" content="建立配置库" placement="top">
               <el-button
                 icon="el-icon-s-promotion"
                 class="pink-btn"
-                @click="gitFormVisible = true"
+                @click="recordProjInfo(scope.row)"
                 circle
               ></el-button>
             </el-tooltip>
 
-            <el-dialog title="建立Git配置库" :visible.sync="gitFormVisible">
-              <el-form :model="configInfo">
+            <el-dialog title="建立配置库" :visible.sync="configFormVisible">
+              <el-form :model="dataSendedFormat" :rules="configFormRules" ref="configFormRef">
                 <el-form-item
                   label="git地址"
                   label-width="80px"
                   label-position="left"
-                  :rules="{ required: true, message: '请填入合适的git仓库地址', trigger: 'blur'}"
+                  prop="gitAddress"
                 >
-                  <el-input v-model="configInfo.gitAddress" autocomplete="off"></el-input>
+                  <el-input v-model="dataSendedFormat.gitAddress" autocomplete="off"></el-input>
                 </el-form-item>
-                 <el-form-item
-                  label="FileSys地址"
-                  label-width="80px"
+                <el-form-item
+                  label="Files地址"
+                  label-width="90px"
                   label-position="left"
-                  :rules="{ required: true, message: '请填入合适的git仓库地址', trigger: 'blur'}"
+                  prop="fileSystemAddress"
                 >
-                  <el-input v-model="configInfo.gitAddress" autocomplete="off"></el-input>
+                  <el-input v-model="dataSendedFormat.fileSystemAddress" autocomplete="off"></el-input>
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="setGitAddr(git)">确 定</el-button>
-                <el-button @click="gitFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="setConfigInfo(dataSendedFormat)">确 定</el-button>
+                <el-button @click="configFormVisible = false">取 消</el-button>
               </div>
             </el-dialog>
           </template>
@@ -69,18 +69,46 @@ import qs from "qs";
 export default {
   data() {
     return {
-      gitFormVisible: false,
-      gitAddress: "",
+      configFormVisible: false,
+      configFormRules: {
+        gitAddress: [
+          {
+            required: true,
+            message: "请填入合适的git仓库地址",
+            trigger: "blur"
+          }
+        ],
+        fileSystemAddress: [
+          {
+            required: true,
+            message: "请填入合适的文件系统仓库地址",
+            trigger: "change"
+          }
+        ]
+      },
+      dataSendedFormat: {
+        projectId: "",
+        projectName: "",
+        clientId: "",
+        expStartDate: "",
+        expEndDate: "",
+        technology: "",
+        businessDomain: "",
+        mainFunctions: "",
+        gitAddress: "",
+        fileSystemAddress: "",
+        taskId: ""
+      },
       gitSetList: []
     };
   },
 
   created() {
-    this.getGitSetProjects();
+    this.getConfigSetProjects();
   },
 
   methods: {
-    getGitSetProjects() {
+    getConfigSetProjects() {
       axios.get("/api/newproject").then(response => {
         if (response.data.code === 0) {
           console.log(response.data.data);
@@ -89,6 +117,46 @@ export default {
           this.$message.error(response.data.data);
         }
       });
+    },
+    recordProjInfo(projArray) {
+      this.configFormVisible = true;
+      console.log(projArray);
+      this.dataSendedFormat.taskId = projArray.taskId;
+      for (var key in projArray.projectBasicInfo) {
+        if (
+          key === "state" ||
+          key === "outputLink" ||
+          key === "milestone" ||
+          key === "projectBossId"
+        ) continue;
+        console.log(key);
+        this.dataSendedFormat[key] = projArray.projectBasicInfo[key];
+      }
+      this.dataSendedFormat.expStartDate = this.dateFormat(
+        this.dataSendedFormat.expStartDate
+      );
+      this.dataSendedFormat.expEndDate = this.dateFormat(
+        this.dataSendedFormat.expEndDate
+      );
+    },
+    setConfigInfo(dataSendedFormat) {
+      console.log(dataSendedFormat);
+      axios
+        .put("/api/newproject/config", qs.stringify(dataSendedFormat))
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success("创建配置库成功！");
+          }
+        });
+      this.configFormVisible = false;
+      this.getConfigSetProjects();
+    },
+    dateFormat: function(originVal) {
+      const dt = new Date(originVal);
+      const y = dt.getFullYear();
+      const m = (dt.getMonth() + 1 + "").padStart(2, "0");
+      const d = (dt.getDate() + "").padStart(2, "0");
+      return `${y}-${m}-${d}`;
     }
   }
 };
