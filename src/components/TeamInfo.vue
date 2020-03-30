@@ -5,12 +5,12 @@
         <el-col :span="8" v-bind:key="member.index">
           <el-card shadow="always">
             <div slot="header" class="clearfix">
-              <span>{{ member.role }}</span>
+              <span>{{ member.title }}</span>
             </div>
             <div class="text">
               <p>
-                <b>ID：</b>
-                <span>{{ member.employeeId }}</span>
+                <b>昵称：</b>
+                <span>{{ member.employeeName }}</span>
               </p>
               <p>
                 <b>邮箱：</b>
@@ -18,11 +18,11 @@
               </p>
               <p>
                 <b>手机号：</b>
-                <span>{{ member.mobile }}</span>
+                <span>{{ member.telephone }}</span>
               </p>
               <p>
-                <b>地址：</b>
-                <span>{{ member.address }}</span>
+                <b>部门：</b>
+                <span>{{ member.department }}</span>
               </p>
             </div>
           </el-card>
@@ -56,11 +56,23 @@ export default {
     getProjectMembers() {
       axios.get("/api/member/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
-          console.log(response.data);
-          this.members = response.data.data;
+          var temp = response.data.data;
+          temp.forEach(item => {
+            this.getUserInfo(item.employeeId);
+          });
+          console.log(this.members);
         }
       });
-      // 需添加获取员工信息
+    },
+    // 根据id获取成员的详细信息
+    getUserInfo(personId) {
+      axios.get("/api/employee/" + personId).then(response => {
+        if (response.data.code === 0) {
+          this.members.push(response.data.data);
+        } else {
+          this.$message.error("获取用户信息失败！");
+        }
+      });
     }
   }
 };
@@ -71,6 +83,9 @@ export default {
   padding-top: 10px;
 }
 .el-row {
+  margin-bottom: 20px;
+}
+.el-col {
   margin-bottom: 20px;
 }
 .text {
