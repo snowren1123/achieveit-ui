@@ -22,16 +22,12 @@
             </template>
             <el-menu-item-group>
               <template slot="title">基本信息</template>
-              <el-menu-item index="/project/basic">属性信息</el-menu-item>
-              <el-menu-item index="/project/client">客户信息</el-menu-item>
+              <el-menu-item index="/project/basic"><i class="el-icon-info"></i>属性信息</el-menu-item>
+              <el-menu-item index="/project/client"><i class="el-icon-s-custom"></i>客户信息</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="项目组成员">
-              <el-menu-item index="/project/team">成员信息</el-menu-item>
+              <el-menu-item index="/project/team"><i class="el-icon-user"></i>成员管理</el-menu-item>
             </el-menu-item-group>
-            <el-submenu index="1-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-            </el-submenu>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
@@ -52,18 +48,22 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-setting"></i>项目操作
+              <i class="el-icon-brush"></i>项目操作
             </template>
             <el-menu-item-group>
               <template slot="title">分组1</template>
-              <el-menu-item index="3-1">申请归档</el-menu-item>
-              <el-menu-item index="3-2">工时填写</el-menu-item>
+              <el-menu-item index="3-1"><i class="el-icon-notebook-1"></i>申请归档</el-menu-item>
+              <el-submenu index="3-2">
+                <template slot="title"><i class="el-icon-date"></i>工时管理</template>
+                <el-menu-item index="1-4-1"><i class="el-icon-timer"></i>我的工时</el-menu-item>
+                <el-menu-item index="1-4-2"><i class="el-icon-finished"></i>工时审批</el-menu-item>
+              </el-submenu>
             </el-menu-item-group>
             <el-menu-item-group title="分组2">
-              <el-menu-item index="3-3">风险管理</el-menu-item>
+              <el-menu-item index="3-3"><i class="el-icon-warning-outline"></i>风险管理</el-menu-item>
             </el-menu-item-group>
             <el-submenu index="3-4">
-              <template slot="title">设备管理</template>
+              <template slot="title"><i class="el-icon-printer"></i>设备管理</template>
               <el-menu-item index="3-4-1">选项4-1</el-menu-item>
             </el-submenu>
           </el-submenu>
@@ -76,8 +76,8 @@
 </template>
 
 <script>
-import axios from "axios"
-import qs from "qs"
+import axios from "axios";
+import qs from "qs";
 import { mapState } from "vuex";
 
 export default {
@@ -104,13 +104,13 @@ export default {
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
-    backToHome(){
-      this.$router.push('/home');
+    backToHome() {
+      this.$router.push("/home");
     },
     getProjectName() {
       axios.get("/api/project_info/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
-          this.projectName = response.data.data.projectName;       
+          this.projectName = response.data.data.projectName;
         }
       });
     }
