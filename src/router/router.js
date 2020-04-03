@@ -13,6 +13,8 @@ import EPGLeader from '../components/EPGLeader.vue'
 import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
+import BasicTimeSheet from '../components/BasicTimeSheet.vue'
+import CheckTimeSheet from '../components/CheckTimeSheet.vue'
 
 Vue.use(Router)
 
@@ -77,6 +79,14 @@ export default new Router({
                 {
                     path: 'Team',
                     component: TeamInfo
+                },
+                {
+                    path: 'BasicTimeSheet',
+                    component: BasicTimeSheet
+                },
+                {
+                    path: 'CheckTimeSheet',
+                    component: CheckTimeSheet
                 }
             ]
         }

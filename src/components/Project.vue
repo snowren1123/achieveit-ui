@@ -10,10 +10,10 @@
     <el-container>
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <el-menu
-          :default-openeds="['1', '3']"
           :default-active="this.$route.path"
           @open="handleOpen"
           @close="handleClose"
+          unique-opened
           router
         >
           <el-submenu index="1">
@@ -22,11 +22,17 @@
             </template>
             <el-menu-item-group>
               <template slot="title">基本信息</template>
-              <el-menu-item index="/project/basic"><i class="el-icon-info"></i>属性信息</el-menu-item>
-              <el-menu-item index="/project/client"><i class="el-icon-s-custom"></i>客户信息</el-menu-item>
+              <el-menu-item index="/project/basic">
+                <i class="el-icon-info"></i>属性信息
+              </el-menu-item>
+              <el-menu-item index="/project/client">
+                <i class="el-icon-s-custom"></i>客户信息
+              </el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="项目组成员">
-              <el-menu-item index="/project/team"><i class="el-icon-user"></i>成员管理</el-menu-item>
+              <el-menu-item index="/project/team">
+                <i class="el-icon-user"></i>成员管理
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
@@ -52,18 +58,30 @@
             </template>
             <el-menu-item-group>
               <template slot="title">分组1</template>
-              <el-menu-item index="3-1"><i class="el-icon-notebook-1"></i>申请归档</el-menu-item>
+              <el-menu-item index="3-1">
+                <i class="el-icon-notebook-1"></i>申请归档
+              </el-menu-item>
               <el-submenu index="3-2">
-                <template slot="title"><i class="el-icon-date"></i>工时管理</template>
-                <el-menu-item index="1-4-1"><i class="el-icon-timer"></i>我的工时</el-menu-item>
-                <el-menu-item index="1-4-2"><i class="el-icon-finished"></i>工时审批</el-menu-item>
+                <template slot="title">
+                  <i class="el-icon-date"></i>工时管理
+                </template>
+                <el-menu-item index="/project/basictimesheet">
+                  <i class="el-icon-timer"></i>我的工时
+                </el-menu-item>
+                <el-menu-item index="/project/checktimesheet">
+                  <i class="el-icon-finished"></i>工时审批
+                </el-menu-item>
               </el-submenu>
             </el-menu-item-group>
             <el-menu-item-group title="分组2">
-              <el-menu-item index="3-3"><i class="el-icon-warning-outline"></i>风险管理</el-menu-item>
+              <el-menu-item index="3-3">
+                <i class="el-icon-warning-outline"></i>风险管理
+              </el-menu-item>
             </el-menu-item-group>
             <el-submenu index="3-4">
-              <template slot="title"><i class="el-icon-printer"></i>设备管理</template>
+              <template slot="title">
+                <i class="el-icon-printer"></i>设备管理
+              </template>
               <el-menu-item index="3-4-1">选项4-1</el-menu-item>
             </el-submenu>
           </el-submenu>
