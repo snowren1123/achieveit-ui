@@ -5,17 +5,39 @@
       <el-tab-pane label="项目名称">{{ basicInfo.projectName }}</el-tab-pane>
       <el-tab-pane label="项目状态">
         <span v-show="!editState">{{ basicInfo.state }}</span>
-        <el-select v-show="editState" v-model="editStateValue" :placeholder="basicInfo.state" clearable>
-          <el-option
-            v-for="item in stateOptions"
-            :key="item"
-            :label="item"
-            :value="item"
-          ></el-option>
+        <el-select
+          v-show="editState"
+          v-model="editStateValue"
+          :placeholder="basicInfo.state"
+          clearable
+        >
+          <el-option v-for="item in stateOptions" :key="item" :label="item" :value="item"></el-option>
         </el-select>
-        <el-button v-show="!editState" type="danger" size="small" icon="el-icon-edit" @click="editState=!editState" circle plain></el-button>
-        <el-button v-show="editState" type="primary" size="small" @click="submitState()" round plain>确认修改</el-button>
-        <el-button v-show="editState" type="danger" size="small" @click="editState=!editState" round plain>取消</el-button>
+        <el-button
+          v-show="!editState"
+          type="danger"
+          size="small"
+          icon="el-icon-edit"
+          @click="editState=!editState"
+          circle
+          plain
+        ></el-button>
+        <el-button
+          v-show="editState"
+          type="primary"
+          size="small"
+          @click="submitState()"
+          round
+          plain
+        >确认修改</el-button>
+        <el-button
+          v-show="editState"
+          type="danger"
+          size="small"
+          @click="editState=!editState"
+          round
+          plain
+        >取消</el-button>
       </el-tab-pane>
       <el-tab-pane label="项目上级">{{ basicInfo.projectBossId }}</el-tab-pane>
       <el-tab-pane label="项目周期">{{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}</el-tab-pane>
@@ -35,10 +57,20 @@
         </el-row>
         <el-row class="btn-group-set">
           <el-tooltip class="item" effect="dark" content="编辑文本" placement="left">
-            <el-button type="info" size="medium" icon="el-icon-edit" @click="editFunc=!editFunc" circle plain></el-button>
+            <el-button
+              type="info"
+              size="medium"
+              icon="el-icon-edit"
+              @click="editFunc=!editFunc"
+              circle
+              plain
+            ></el-button>
           </el-tooltip>
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            ref="uploadExcel"
+            action="/api/upload/function"
+            accept=".xlsx, .xls"
+            :headers="uploadHeaders"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-success="handleSuccess"
@@ -53,7 +85,14 @@
             </el-tooltip>
           </el-upload>
           <el-tooltip class="item" effect="dark" content="下载为excel格式文件" placement="left">
-            <el-button type="success" size="medium" icon="el-icon-download" circle plain></el-button>
+            <el-button
+              type="success"
+              size="medium"
+              icon="el-icon-download"
+              @click="downloadExcel()"
+              circle
+              plain
+            ></el-button>
           </el-tooltip>
         </el-row>
       </el-tab-pane>
@@ -65,6 +104,7 @@
 <script>
 import axios from "axios";
 import qs from "qs";
+import Cookie from "js-cookie";
 import { mapState } from "vuex";
 
 export default {
@@ -82,12 +122,13 @@ export default {
         businessDomain: "",
         mainFunctions: ""
       },
-      stateOptions:[
-        "进行中", "已结束", "已交付", "申请归档"
-      ],
+      stateOptions: ["进行中", "已结束", "已交付", "申请归档"],
+      uploadHeaders: {
+        Authorization: "Bearer " + Cookie.get("token")
+      },
       excelFileList: [],
-      editFuncValue: '',
-      editStateValue: '',
+      editFuncValue: "",
+      editStateValue: "",
       isUpload: true,
       editFunc: false,
       editState: false
@@ -113,8 +154,11 @@ export default {
       this.$message.warning(`只可选择1个文件，请先移除已有文件`);
     },
     handleSuccess(response, file, fileList) {
-      this.$message.success("上传文件成功！");
-      this.isUpload = false;
+      console.log(response.data)
+      if (response.code === 0) {
+        this.$message.success("上传文件成功！");
+        this.isUpload = false;
+      }
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定放弃上传 ${file.name}？`);
@@ -152,13 +196,17 @@ export default {
           });
         });
     },
-    submitState(){
-      this.$confirm("确认将状态修改为"+this.editStateValue+"?", "确认信息", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        center: false
-      })
+    submitState() {
+      this.$confirm(
+        "确认将状态修改为" + this.editStateValue + "?",
+        "确认信息",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: false
+        }
+      )
         .then(() => {
           this.basicInfo.state = this.editStateValue;
           console.log(this.basicInfo.state);
@@ -174,6 +222,10 @@ export default {
             message: "取消修改"
           });
         });
+    },
+    downloadExcel() {
+      // 有问题
+      window.location.href='/api/download/function/'+this.projectBasicId;
     }
   }
 };
