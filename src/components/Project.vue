@@ -65,10 +65,10 @@
                 <template slot="title">
                   <i class="el-icon-date"></i>工时管理
                 </template>
-                <el-menu-item index="/project/basictimesheet">
+                <el-menu-item index="/home/basictimesheet">
                   <i class="el-icon-timer"></i>我的工时
                 </el-menu-item>
-                <el-menu-item index="/project/checktimesheet">
+                <el-menu-item index="/home/checktimesheet">
                   <i class="el-icon-finished"></i>工时审批
                 </el-menu-item>
               </el-submenu>

@@ -13,6 +13,8 @@ import EPGLeader from '../components/EPGLeader.vue'
 import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
+
+import ProjectList from '../components/ProjectList.vue'
 import BasicTimeSheet from '../components/BasicTimeSheet.vue'
 import CheckTimeSheet from '../components/CheckTimeSheet.vue'
 
@@ -31,7 +33,20 @@ export default new Router({
         },
         {
             path: '/Home',
-            component: Home
+            component: Home,
+            children: [{
+                path: 'ProjectList',
+                component: ProjectList
+            },
+            {
+                path: 'BasicTimeSheet',
+                component: BasicTimeSheet
+            },
+            {
+                path: 'CheckTimeSheet',
+                component: CheckTimeSheet
+            }
+            ]
         },
         {
             path: '/Boss',
@@ -79,14 +94,6 @@ export default new Router({
                 {
                     path: 'Team',
                     component: TeamInfo
-                },
-                {
-                    path: 'BasicTimeSheet',
-                    component: BasicTimeSheet
-                },
-                {
-                    path: 'CheckTimeSheet',
-                    component: CheckTimeSheet
                 }
             ]
         }
