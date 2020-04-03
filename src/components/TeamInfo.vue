@@ -417,7 +417,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .el-card__body {
   padding-top: 10px;
 }
