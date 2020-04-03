@@ -276,11 +276,10 @@ export default {
 
       axios
         .delete(
-          "/api/member",
-          qs.stringify({
-            projectId: this.projectBasicId,
-            employeeId: employeeId
-          })
+          "/api/member?projectId=" +
+            this.projectBasicId +
+            "&employeeId=" +
+            employeeId
         )
         .then(response => {
           console.log(response);
