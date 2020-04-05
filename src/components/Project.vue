@@ -13,7 +13,7 @@
           :default-active="this.$route.path"
           @open="handleOpen"
           @close="handleClose"
-          unique-opened
+          :default-openeds="['3','3-5']"
           router
         >
           <el-submenu index="1">
@@ -78,6 +78,20 @@
                 <i class="el-icon-warning-outline"></i>风险管理
               </el-menu-item>
             </el-menu-item-group>
+            <el-submenu index="3-5">
+              <template slot="title">
+                <i class="el-icon-data-analysis"></i>评审缺陷
+              </template>
+              <el-menu-item index="/project/reviewlist">
+                <i class="el-icon-toilet-paper"></i>评缺查看
+              </el-menu-item>
+              <el-menu-item index="3-5-2">
+                <i class="el-icon-mic"></i>评缺报告
+              </el-menu-item>
+              <el-menu-item index="3-5-3">
+                <i class="el-icon-coordinate"></i>评缺处理
+              </el-menu-item>
+            </el-submenu>
             <el-submenu index="3-4">
               <template slot="title">
                 <i class="el-icon-printer"></i>设备管理

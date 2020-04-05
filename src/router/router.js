@@ -18,6 +18,8 @@ import ProjectList from '../components/ProjectList.vue'
 import BasicTimeSheet from '../components/BasicTimeSheet.vue'
 import CheckTimeSheet from '../components/CheckTimeSheet.vue'
 
+import BasicReviewInfo from '../components/BasicReviewInfo.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -95,6 +97,10 @@ export default new Router({
                 {
                     path: 'Team',
                     component: TeamInfo
+                },
+                {
+                    path: 'ReviewList',
+                    component: BasicReviewInfo
                 }
             ]
         }
