@@ -34,6 +34,7 @@ export default new Router({
         {
             path: '/Home',
             component: Home,
+            redirect: '/home/projectlist',
             children: [{
                 path: 'ProjectList',
                 component: ProjectList

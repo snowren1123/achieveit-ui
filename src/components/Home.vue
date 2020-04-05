@@ -30,7 +30,7 @@
             <el-menu-item-group>
               <template slot="title">基本分类</template>
               <el-menu-item index="/home/projectlist">
-                <i class="el-icon-message"></i>全部项目
+                <i class="el-icon-message"></i>我的项目
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>

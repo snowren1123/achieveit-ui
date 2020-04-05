@@ -97,6 +97,7 @@
                 placeholder="预定日期"
                 v-model="projectInfo.expStartDate"
                 style="width: 100%;"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -108,6 +109,7 @@
                 placeholder="交付日"
                 v-model="projectInfo.expEndDate"
                 style="width: 100%;"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -177,7 +179,7 @@ export default {
         ],
         expStartDate: [
           {
-            type: "date",
+            type: "string",
             required: true,
             message: "请选择开始时间",
             trigger: "change"
@@ -185,7 +187,7 @@ export default {
         ],
         expEndDate: [
           {
-            type: "date",
+            type: "string",
             required: true,
             message: "请选择开始时间",
             trigger: "change"
@@ -210,19 +212,18 @@ export default {
     submitForm() {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
-        var proInfo = this.deepClone(this.projectInfo);
-        proInfo.expStartDate = this.dateFormat(proInfo.expStartDate);
-        proInfo.expEndDate = this.dateFormat(proInfo.expEndDate);
 
-        axios.post("/api/newproject", qs.stringify(proInfo)).then(response => {
-          console.log(response);
-          if (response.data.code === 0) {
-            this.getProjectsList();
-            this.$message.success("新建项目成功！");
-          } else {
-            this.$message.error("新建项目失败！");
-          }
-        });
+        axios
+          .post("/api/newproject", qs.stringify(this.projectInfo))
+          .then(response => {
+            console.log(response);
+            if (response.data.code === 0) {
+              this.getProjectsList();
+              this.$message.success("新建项目成功！");
+            } else {
+              this.$message.error("新建项目失败！");
+            }
+          });
         this.addDialogFormVisible = false;
       });
     },
@@ -282,22 +283,6 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-    },
-    dateFormat: function(originVal) {
-      const dt = new Date(originVal);
-      const y = dt.getFullYear();
-      const m = (dt.getMonth() + 1 + "").padStart(2, "0");
-      const d = (dt.getDate() + "").padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    },
-    deepClone: function(data) {
-      var obj = {};
-
-      for (var key in data) {
-        obj[key] = data[key];
-      }
-
-      return obj;
     }
   }
 };
