@@ -78,12 +78,11 @@
                 <i class="el-icon-warning-outline"></i>风险管理
               </el-menu-item>
             </el-menu-item-group>
-            <el-submenu index="3-4">
-              <template slot="title">
+            <el-menu-item-group>
+              <el-menu-item index="/project/device">
                 <i class="el-icon-printer"></i>设备管理
-              </template>
-              <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-            </el-submenu>
+              </el-menu-item>
+            </el-menu-item-group>
           </el-submenu>
         </el-menu>
       </el-aside>

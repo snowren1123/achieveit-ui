@@ -13,6 +13,7 @@ import EPGLeader from '../components/EPGLeader.vue'
 import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
+import Device from '../components/Device.vue'
 
 import ProjectList from '../components/ProjectList.vue'
 import BasicTimeSheet from '../components/BasicTimeSheet.vue'
@@ -95,6 +96,10 @@ export default new Router({
                 {
                     path: 'Team',
                     component: TeamInfo
+                },
+                {
+                    path: 'Device',
+                    component: Device
                 }
             ]
         }
