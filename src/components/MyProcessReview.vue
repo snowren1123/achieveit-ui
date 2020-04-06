@@ -15,7 +15,7 @@
         border
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140"></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" width="145"></el-table-column>
         <el-table-column
           prop="type"
           label="类型"
@@ -38,9 +38,6 @@
           prop="state"
           label="状态"
           width="100"
-          :filters="[{ text: '已处理', value: 1 }, { text: '待处理', value: 0 }]"
-          :filter-method="filterTypeOrState"
-          filter-placement="bottom-end"
         >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.state === 1" type="success">已处理</el-tag>
@@ -48,7 +45,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" width="210"></el-table-column>
-        <el-table-column label="链接" width="195">
+        <el-table-column label="链接" width="207">
           <template slot-scope="scope">{{ scope.row.link }}</template>
         </el-table-column>
       </el-table>

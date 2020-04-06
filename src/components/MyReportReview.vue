@@ -15,7 +15,7 @@
         border
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140"></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" width="145"></el-table-column>
         <el-table-column
           prop="type"
           label="类型"
@@ -51,7 +51,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" width="210"></el-table-column>
-        <el-table-column label="链接" width="195">
+        <el-table-column label="链接" width="207">
           <template slot-scope="scope">{{ scope.row.link }}</template>
         </el-table-column>
       </el-table>

@@ -331,11 +331,24 @@ export default {
       this.$message.warning(`只可选择1个文件，请先移除已有文件`);
     },
     handleSuccess(response, file, fileList) {
+      this.$message.success("上传文件成功！");
+      this.isUpload = false;
+      this.excelFileList = [];
       console.log(response.data);
-      if (response.code === 0) {
-        this.$message.success("上传文件成功！");
-        this.isUpload = false;
-      }
+      var updateObj = response.data;
+      updateObj.projectId = this.projectBasicId;
+      axios
+        .put("/api/function", JSON.stringify(updateObj), {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          }
+        })
+        .then(response => {
+          if (response.code === 0) {
+            console.log("success update");
+          }
+        });
+        this.getFuncList();
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定放弃上传 ${file.name}？`);

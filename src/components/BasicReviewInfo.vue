@@ -82,7 +82,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="description" label="描述" width="200"></el-table-column>
-        <el-table-column label="链接" width="195">
+        <el-table-column label="链接" width="190">
           <template slot-scope="scope">{{ scope.row.link }}</template>
         </el-table-column>
       </el-table>
@@ -117,7 +117,12 @@
           </el-form-item>
           <el-form-item label="类型" prop="type">
             <el-select v-model="reportInfo.type" clearable placeholder="请选择报告类型">
-              <el-option v-for="item in reportTypeOpts" :key="item" :label="item" :value="item"></el-option>
+              <el-option
+                v-for="item in reportTypeOpts"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="报告人员" prop="providerId">
@@ -241,7 +246,10 @@ export default {
         date: "",
         link: ""
       },
-      reportTypeOpts: ["评审", "缺陷"],
+      reportTypeOpts: [
+        { label: "评审", value: "review" },
+        { label: "缺陷", value: "defect" }
+      ],
       reportVisible: false,
       reportFormRules: {
         type: [
@@ -323,6 +331,7 @@ export default {
     submitReport() {
       this.reportInfo.projectId = this.projectBasicId;
       this.reportInfo.providerId = this.personId;
+      console.log(this.reportInfo);
       axios
         .post("/api/review_defect", JSON.stringify(this.reportInfo), {
           headers: {
@@ -331,9 +340,10 @@ export default {
         })
         .then(response => {
           console.log(response.data);
+          this.reportVisible = false;
           if (response.data.code === 0) {
-            this.reportVisible = false;
             this.$message.success("添加报告成功！");
+            this.getReviewList();
           }
         });
     },
@@ -355,6 +365,7 @@ export default {
           if (response.data.code === 0) {
             this.processVisible = false;
             this.$message.success("处理报告成功！");
+            this.getReviewList();
           }
         });
     },

@@ -300,7 +300,7 @@ export default {
     addMemberDialogShow() {
       this.memberInfo.projectId = this.projectBasicId;
 
-      axios.get("/api/employees/org_config").then(response => {
+      axios.get("/api/employees").then(response => {
         if (response.data.code === 0) {
           this.employees = response.data.data;
         } else {
