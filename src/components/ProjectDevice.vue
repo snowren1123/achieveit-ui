@@ -8,12 +8,13 @@
         </span>
         <el-table
           :data="deviceList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          :default-sort="{prop: 'deviceId'}"
           border
           stripe
         >
-          <el-table-column prop="deviceId" label="设备ID"></el-table-column>
+          <el-table-column prop="deviceId" label="设备ID" sortable></el-table-column>
           <el-table-column prop="type" label="类型"></el-table-column>
-          <el-table-column prop="checkinDate" label="分配日期">
+          <el-table-column prop="checkinDate" label="分配日期" sortable>
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="returnDate" label="归还日期">
@@ -22,10 +23,10 @@
               <span v-else>暂未归还</span>
             </template>
           </el-table-column>
-          <el-table-column prop="totalUseTime" label="使用期限">
+          <el-table-column prop="totalUseTime" label="使用期限" sortable>
             <template slot-scope="scope">{{scope.row.totalUseTime}}个月</template>
           </el-table-column>
-          <el-table-column prop="lastVerifyDate" label="上次核对">
+          <el-table-column prop="lastVerifyDate" label="上次核对" sortable>
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="deviceManagerId" label="使用者ID"></el-table-column>
@@ -36,7 +37,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[6, 8, 10, 15]"
+          :page-sizes="[6, 10, 15, 20]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -49,12 +50,13 @@
         </span>
         <el-table
           :data="myDeviceList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+          :default-sort="{prop: 'deviceId'}"
           border
           stripe
         >
-          <el-table-column prop="deviceId" label="设备ID"></el-table-column>
+          <el-table-column prop="deviceId" label="设备ID" sortable></el-table-column>
           <el-table-column prop="type" label="类型"></el-table-column>
-          <el-table-column prop="checkinDate" label="分配日期">
+          <el-table-column prop="checkinDate" label="分配日期" sortable>
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="returnDate" label="归还日期">
@@ -63,10 +65,10 @@
               <span v-else>暂未归还</span>
             </template>
           </el-table-column>
-          <el-table-column prop="totalUseTime" label="使用期限">
+          <el-table-column prop="totalUseTime" label="使用期限" sortable>
             <template slot-scope="scope">{{scope.row.totalUseTime}}个月</template>
           </el-table-column>
-          <el-table-column prop="lastVerifyDate" label="上次核对">
+          <el-table-column prop="lastVerifyDate" label="上次核对" sortable>
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column label="操作" width="130">
@@ -108,7 +110,7 @@
           @size-change="handleSizeChange1"
           @current-change="handleCurrentChange1"
           :current-page="currentPage1"
-          :page-sizes="[6, 8, 10, 15]"
+          :page-sizes="[6, 10, 15, 20]"
           :page-size="pageSize1"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total1"

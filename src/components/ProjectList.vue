@@ -16,7 +16,9 @@
           </el-input>
         </el-col>
         <el-col style="margin-left:20px">
-          <el-button type="primary" @click="addProject">新增项目</el-button>
+          <el-button type="primary" @click="addProject" plain round>
+            <i class="el-icon-plus"></i>新建
+          </el-button>
         </el-col>
       </el-row>
 
@@ -60,7 +62,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[2, 4, 6, 10]"
+        :page-sizes="[3, 6, 9, 12]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -197,7 +199,7 @@ export default {
       projectsIds: [],
       clientIds: [],
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 3,
       total: 0,
       keyWord: ""
     };

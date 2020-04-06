@@ -2,7 +2,7 @@
   <!-- 内容主体区域 -->
   <el-main>
     <el-card shadow="always">
-    <el-row type="flex" justify="space-between" align="middle">
+      <el-row type="flex" justify="space-between" align="middle">
         <el-col :span="8">
           <div style="font-size:18px">待审核工时列表</div>
         </el-col>
@@ -10,10 +10,11 @@
       <!-- 工时列表区域 -->
       <el-table
         :data="timesheetList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :default-sort="{prop: 'projectId', order: 'descending'}"
         border
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140"></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" width="140" sortable></el-table-column>
         <el-table-column label="功能模块">
           <template
             slot-scope="scope"
@@ -24,7 +25,7 @@
             slot-scope="scope"
           >{{scope.row.primaryFunction}} / {{scope.row.secondaryFunction}}</template>
         </el-table-column>
-        <el-table-column prop="date" label="日期" width="120"></el-table-column>
+        <el-table-column prop="date" label="日期" width="120" sortable></el-table-column>
         <el-table-column label="时间" width="140">
           <template
             slot-scope="scope"
@@ -62,7 +63,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[2, 4, 6, 10]"
+        :page-sizes="[6, 10, 15, 20]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -81,7 +82,7 @@ export default {
     return {
       timesheetList: [],
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 6,
       total: 0
     };
   },
