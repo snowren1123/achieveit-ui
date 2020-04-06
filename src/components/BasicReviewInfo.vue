@@ -5,8 +5,10 @@
         <el-col :span="8">
           <div style="font-size:18px">评审/缺陷信息表</div>
         </el-col>
-        <el-col :span="3">
-          <el-button type="primary" @click="getBySearchProvider()">占位</el-button>
+        <el-col :span="2">
+          <el-button type="danger" size="medium" @click="reportVisible=true" plain round>
+            <i class="el-icon-plus"></i>报告
+          </el-button>
         </el-col>
       </el-row>
       <!-- 工时列表区域 -->
@@ -58,7 +60,7 @@
             <el-tag v-if="scope.row.state === 0" type="warning">待处理</el-tag>
           </template>
         </el-table-column>
-        <el-table-column width="150">
+        <el-table-column width="155">
           <template slot="header" slot-scope="scope">
             <el-input
               class="search-set"
@@ -72,12 +74,15 @@
             ></el-input>
           </template>
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.solverId == null" type="info">暂无</el-tag>
+            <div v-if="scope.row.solverId == null">
+              <el-tag type="info">暂无</el-tag>
+              <el-button type="primary" size="small" plain @click="processReport(scope.row)">点击处理</el-button>
+            </div>
             <span v-else>{{ scope.row.solverId }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="description" label="描述" width="190"></el-table-column>
-        <el-table-column label="链接" width="170">
+        <el-table-column prop="description" label="描述" width="200"></el-table-column>
+        <el-table-column label="链接" width="195">
           <template slot-scope="scope">{{ scope.row.link }}</template>
         </el-table-column>
       </el-table>
@@ -92,6 +97,122 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
+
+      <!-- 报告评审/缺陷 -->
+      <el-dialog title="报告评审/缺陷" :visible.sync="reportVisible" @close="reportDialogClosed">
+        <el-form
+          :model="reportInfo"
+          label-width="100px"
+          label-position="left"
+          :rules="reportFormRules"
+          ref="reportFormRef"
+        >
+          <el-form-item label="项目ID" prop="projectId">
+            <el-input
+              :placeholder="projectBasicId"
+              v-model="projectBasicId"
+              :disabled="true"
+              style="width: 217px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="类型" prop="type">
+            <el-select v-model="reportInfo.type" clearable placeholder="请选择报告类型">
+              <el-option v-for="item in reportTypeOpts" :key="item" :label="item" :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="报告人员" prop="providerId">
+            <el-input
+              :placeholder="personId"
+              v-model="personId"
+              :disabled="true"
+              style="width: 217px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="描述" prop="description">
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入评审/缺陷描述"
+              clearable
+              v-model="reportInfo.description"
+              style="width: 400px"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="链接" prop="link">
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入可用链接"
+              clearable
+              v-model="reportInfo.link"
+              style="width: 400px;"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitReport()">确认提交</el-button>
+          <el-button @click="reportVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
+      <!-- 处理评审/缺陷 -->
+      <el-dialog title="处理评审/缺陷" :visible.sync="processVisible" @close="processDialogClosed">
+        <el-form
+          :model="processInfo"
+          label-width="100px"
+          label-position="left"
+          :rules="processFormRules"
+          ref="processFormRef"
+        >
+          <el-form-item label="项目ID" prop="projectId">
+            <el-input
+              :placeholder="projectBasicId"
+              v-model="projectBasicId"
+              :disabled="true"
+              style="width: 217px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="类型" prop="type">
+            <el-input
+              :placeholder="processInfo.type"
+              v-model="processInfo.type"
+              :disabled="true"
+              style="width: 217px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="报告人员" prop="providerId">
+            <el-input
+              :placeholder="processInfo.providerId"
+              v-model="processInfo.providerId"
+              :disabled="true"
+              style="width: 217px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="描述" prop="description">
+            <el-input
+              type="textarea"
+              autosize
+              :placeholder="processInfo.description"
+              clearable
+              v-model="processInfo.description"
+              style="width: 400px"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="链接" prop="link">
+            <el-input
+              type="textarea"
+              autosize
+              :placeholder="processInfo.link"
+              clearable
+              v-model="processInfo.link"
+              style="width: 400px;"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitProcess()">确认处理</el-button>
+          <el-button @click="processVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </el-main>
 </template>
@@ -110,14 +231,47 @@ export default {
       pageSize: 8,
       total: 0,
       searchProvider: "",
-      searchSolver: ""
+      searchSolver: "",
+      reportInfo: {
+        projectId: "",
+        type: "",
+        providerId: "",
+        state: 0,
+        description: "",
+        date: "",
+        link: ""
+      },
+      reportTypeOpts: ["评审", "缺陷"],
+      reportVisible: false,
+      reportFormRules: {
+        type: [
+          { required: true, message: "请选择报告类型", trigger: "change" }
+        ],
+        description: [
+          { required: true, message: "请添加报告描述", trigger: "change" }
+        ]
+      },
+      processInfo: {
+        reviewDefectId: "",
+        projectId: "",
+        type: "",
+        providerId: "",
+        state: 0,
+        solverId: "",
+        description: "",
+        date: "",
+        link: ""
+      },
+      processVisible: false,
+      processFormRules: {}
     };
   },
   created() {
     this.getReviewList();
   },
   computed: {
-    ...mapState(["projectBasicId"])
+    ...mapState(["projectBasicId"]),
+    ...mapState(["personId"])
   },
   methods: {
     getReviewList() {
@@ -165,6 +319,45 @@ export default {
           });
       }
     },
+    // 新建项目的评审缺陷
+    submitReport() {
+      this.reportInfo.projectId = this.projectBasicId;
+      this.reportInfo.providerId = this.personId;
+      axios
+        .post("/api/review_defect", JSON.stringify(this.reportInfo), {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          if (response.data.code === 0) {
+            this.reportVisible = false;
+            this.$message.success("添加报告成功！");
+          }
+        });
+    },
+    // 项目内处理评审缺陷
+    processReport(objData) {
+      this.processInfo = objData;
+      console.log(this.processInfo);
+      this.processVisible = true;
+    },
+    submitProcess() {
+      axios
+        .put("/api/review_defect", JSON.stringify(this.processInfo), {
+          headers: {
+            "Content-Type": "application/json;charset=UTF-8"
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          if (response.data.code === 0) {
+            this.processVisible = false;
+            this.$message.success("处理报告成功！");
+          }
+        });
+    },
     handleSizeChange(val) {
       this.pageSize = val;
     },
@@ -174,6 +367,12 @@ export default {
     filterTypeOrState(value, row, column) {
       const property = column["property"];
       return row[property] === value;
+    },
+    reportDialogClosed() {
+      this.$refs.reportFormRef.resetFields();
+    },
+    processDialogClosed() {
+      this.$refs.processFormRef.resetFields();
     }
   }
 };

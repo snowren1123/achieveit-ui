@@ -17,7 +17,7 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <el-menu
-          :default-openeds="['1','2']"
+          :default-openeds="['1','2','3']"
           :default-active="this.$route.path"
           @open="handleOpen"
           @close="handleClose"
@@ -48,6 +48,20 @@
               <template slot="title">相关操作</template>
               <el-menu-item index="/home/checktimesheet">
                 <i class="el-icon-finished"></i>工时审批
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="3">
+            <template slot="title">
+              <i class="el-icon-data-analysis"></i>评审缺陷
+            </template>
+            <el-menu-item-group>
+              <template slot="title">查看评缺</template>
+              <el-menu-item index="/home/myreportreview">
+                <i class="el-icon-mic"></i>我的报告
+              </el-menu-item>
+              <el-menu-item index="/home/myprocessreview">
+                <i class="el-icon-coordinate"></i>我的处理
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>

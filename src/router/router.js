@@ -20,6 +20,8 @@ import BasicTimeSheet from '../components/BasicTimeSheet.vue'
 import CheckTimeSheet from '../components/CheckTimeSheet.vue'
 
 import BasicReviewInfo from '../components/BasicReviewInfo.vue'
+import MyReportReview from '../components/MyReportReview.vue'
+import MyProcessReview from '../components/MyProcessReview.vue'
 
 Vue.use(Router)
 
@@ -49,6 +51,14 @@ export default new Router({
             {
                 path: 'CheckTimeSheet',
                 component: CheckTimeSheet
+            },
+            {
+                path: 'MyReportReview',
+                component: MyReportReview
+            },
+            {
+                path: 'MyProcessReview',
+                component: MyProcessReview
             }
             ]
         },

@@ -78,7 +78,7 @@
                 <i class="el-icon-warning-outline"></i>风险管理
               </el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <el-menu-item-group title="分组3">
               <el-submenu index="3-5">
                 <template slot="title">
                   <i class="el-icon-data-analysis"></i>评审缺陷
@@ -94,7 +94,7 @@
                 </el-menu-item>
               </el-submenu>
             </el-menu-item-group>
-            <el-menu-item-group>
+            <el-menu-item-group title="分组4">
               <el-menu-item index="/project/device">
                 <template slot="title">
                   <i class="el-icon-printer"></i>设备管理

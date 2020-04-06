@@ -78,6 +78,8 @@ export default {
               this.$router.push("/epgleader");
             else if (user.title === "组织级配置管理员")
               this.$router.push("/orgconfig");
+            else
+              this.$router.push("/home");
           } else {
             this.$message.error("账号或密码错误！");
           }
