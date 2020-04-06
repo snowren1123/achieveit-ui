@@ -71,15 +71,13 @@ export default {
             this.$message.success("登录成功");
             this.$store.commit("setUserId", user.employeeId);
 
-            if (user.title === "项目经理") this.$router.push("/home");
-            else if (user.title === "项目上级") this.$router.push("/boss");
+            if (user.title === "项目上级") this.$router.push("/boss");
             else if (user.title === "QA经理") this.$router.push("/qaleader");
             else if (user.title === "EPG Leader")
               this.$router.push("/epgleader");
             else if (user.title === "组织级配置管理员")
               this.$router.push("/orgconfig");
-            else
-              this.$router.push("/home");
+            else this.$router.push("/home");
           } else {
             this.$message.error("账号或密码错误！");
           }

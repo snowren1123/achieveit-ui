@@ -13,8 +13,8 @@
           :default-active="this.$route.path"
           @open="handleOpen"
           @close="handleClose"
-          :default-openeds="['3','3-5']"
           router
+          unique-opened
         >
           <el-submenu index="1">
             <template slot="title">
@@ -35,23 +35,6 @@
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-menu"></i>待填充
-            </template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="2-1">选项1</el-menu-item>
-              <el-menu-item index="2-2">选项2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="2-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="2-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-            </el-submenu>
-          </el-submenu>
           <el-submenu index="3">
             <template slot="title">
               <i class="el-icon-brush"></i>项目操作
@@ -61,17 +44,6 @@
               <el-menu-item index="3-1">
                 <i class="el-icon-notebook-1"></i>申请归档
               </el-menu-item>
-              <el-submenu index="3-2">
-                <template slot="title">
-                  <i class="el-icon-date"></i>工时管理
-                </template>
-                <el-menu-item index="/home/basictimesheet">
-                  <i class="el-icon-timer"></i>我的工时
-                </el-menu-item>
-                <el-menu-item index="/home/checktimesheet">
-                  <i class="el-icon-finished"></i>工时审批
-                </el-menu-item>
-              </el-submenu>
             </el-menu-item-group>
             <el-menu-item-group title="分组2">
               <el-menu-item index="3-3">
@@ -95,7 +67,7 @@
               </el-submenu>
             </el-menu-item-group>
             <el-menu-item-group title="分组4">
-              <el-menu-item index="/project/device">
+              <el-menu-item index="/project/projectdevice">
                 <template slot="title">
                   <i class="el-icon-printer"></i>设备管理
                 </template>

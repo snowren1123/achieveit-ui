@@ -13,7 +13,8 @@ import EPGLeader from '../components/EPGLeader.vue'
 import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
-import Device from '../components/Device.vue'
+import ProjectDevice from '../components/ProjectDevice.vue'
+import MyDevice from '../components/MyDevice.vue'
 
 import ProjectList from '../components/ProjectList.vue'
 import BasicTimeSheet from '../components/BasicTimeSheet.vue'
@@ -59,6 +60,10 @@ export default new Router({
             {
                 path: 'MyProcessReview',
                 component: MyProcessReview
+            },
+            {
+                path: 'MyDevice',
+                component: MyDevice
             }
             ]
         },
@@ -110,9 +115,9 @@ export default new Router({
                     component: TeamInfo
                 },
                 {
-                    path: 'Device',
-                    component: Device
-                }, 
+                    path: 'ProjectDevice',
+                    component: ProjectDevice
+                },
                 {
                     path: 'ReviewList',
                     component: BasicReviewInfo

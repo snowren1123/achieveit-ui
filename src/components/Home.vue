@@ -17,11 +17,11 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <el-menu
-          :default-openeds="['1','2','3']"
           :default-active="this.$route.path"
           @open="handleOpen"
           @close="handleClose"
           router
+          unique-opened
         >
           <el-submenu index="1">
             <template slot="title">
@@ -43,9 +43,6 @@
               <el-menu-item index="/home/basictimesheet">
                 <i class="el-icon-timer"></i>我的工时
               </el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group>
-              <template slot="title">相关操作</template>
               <el-menu-item index="/home/checktimesheet">
                 <i class="el-icon-finished"></i>工时审批
               </el-menu-item>
@@ -62,6 +59,17 @@
               </el-menu-item>
               <el-menu-item index="/home/myprocessreview">
                 <i class="el-icon-coordinate"></i>我的处理
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="4">
+            <template slot="title">
+              <i class="el-icon-printer"></i>设备管理
+            </template>
+            <el-menu-item-group>
+              <template slot="title">基本分类</template>
+              <el-menu-item index="/home/mydevice">
+                <i class="el-icon-camera"></i>我的设备
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
