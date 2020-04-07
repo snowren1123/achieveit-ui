@@ -24,10 +24,10 @@
         >
           <el-menu-item-group>
             <el-menu-item index="/orgconfig/gitset">
-              <i class="el-icon-upload"></i>建立git库
+              <i class="el-icon-upload"></i>建立配置库
             </el-menu-item>
-            <el-menu-item index>
-              <i class="el-icon-s-tools"></i>设置归档
+            <el-menu-item index="/orgconfig/orgarchives">
+              <i class="el-icon-notebook-1"></i>验收归档
             </el-menu-item>
           </el-menu-item-group>
         </el-menu>

@@ -13,6 +13,7 @@ import EPGLeader from '../components/EPGLeader.vue'
 import QALeader from '../components/QALeader.vue'
 import OrgConfig from '../components/OrgConfigPanel.vue'
 import OrgGitset from '../components/OrgGitset.vue'
+import OrgArchives from '../components/OrgArchives.vue'
 import ProjectDevice from '../components/ProjectDevice.vue'
 import MyDevice from '../components/MyDevice.vue'
 
@@ -94,6 +95,10 @@ export default new Router({
                 {
                     path: 'Gitset',
                     component: OrgGitset
+                },
+                {
+                    path: 'OrgArchives',
+                    component: OrgArchives
                 }
             ]
         },

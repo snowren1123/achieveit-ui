@@ -4,19 +4,29 @@
       <el-tab-pane label="项目ID">{{ basicInfo.projectId }}</el-tab-pane>
       <el-tab-pane label="项目名称">{{ basicInfo.projectName }}</el-tab-pane>
       <el-tab-pane label="项目状态">
-        <span v-show="!editState">{{ basicInfo.state }}</span>
+        <el-tag v-show="!editState" v-if="basicInfo.state == '同意立项'">同意立项</el-tag>
+        <el-tag v-show="!editState" v-if="basicInfo.state == '进行中'">进行中</el-tag>
+        <el-tag type="success" v-show="!editState" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
+        <el-tag type="info" v-show="!editState" v-else-if="basicInfo.state == '已结束'">已结束</el-tag>
+        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已归档'">已归档</el-tag>
+        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已交付'">已交付</el-tag>
+        <el-tag type="danger" v-show="!editState" v-else-if="basicInfo.state == '驳回立项'">驳回立项</el-tag>
         <el-select
           v-show="editState"
           v-model="editStateValue"
           :placeholder="basicInfo.state"
           clearable
         >
-          <el-option v-for="item in stateOptions" :key="item" :label="item" :value="item"></el-option>
+          <el-option
+            v-for="item in stateOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
         <el-button
           v-show="!editState"
-          type="danger"
-          size="small"
+          size="mini"
           icon="el-icon-edit"
           @click="editState=!editState"
           circle
@@ -179,7 +189,11 @@ export default {
         businessDomain: "",
         mainFunctions: ""
       },
-      stateOptions: ["进行中", "已结束", "已交付", "申请归档"],
+      stateOptions: [
+        { label: "进行中", value: "进行中" },
+        { label: "已结束,申请归档", value: "已结束" },
+        { label: "已交付", value: "已交付" }
+      ],
       uploadHeaders: {
         Authorization: "Bearer " + Cookie.get("token")
       },
@@ -348,7 +362,7 @@ export default {
             console.log("success update");
           }
         });
-        this.getFuncList();
+      this.getFuncList();
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定放弃上传 ${file.name}？`);
@@ -429,10 +443,14 @@ export default {
           this.basicInfo.state = this.editStateValue;
           console.log(this.basicInfo.state);
           this.editState = false;
-          this.$message({
-            type: "success",
-            message: "修改成功!"
-          });
+          axios.put("/api/state", qs.stringify({
+            projectId: this.projectBasicId,
+            state: this.editStateValue
+          })).then(response => {
+              if(response.data.code === 0){
+                this.$message.success("已修改状态为" + this.basicInfo.state);
+              }
+          })
         })
         .catch(() => {
           this.$message({
