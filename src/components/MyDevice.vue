@@ -18,7 +18,7 @@
           <el-table-column prop="checkinDate" label="分配日期" sortable>
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column prop="returnDate" label="归还日期" sortable>
+          <el-table-column prop="returnDate" label="归还日期">
             <template slot-scope="scope">
               <span v-if="scope.row.returnDate != null">{{scope.row.returnDate.slice(0,10)}}</span>
               <span v-else>暂未归还</span>
