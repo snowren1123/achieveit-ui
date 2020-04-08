@@ -25,6 +25,9 @@ import BasicReviewInfo from '../components/BasicReviewInfo.vue'
 import MyReportReview from '../components/MyReportReview.vue'
 import MyProcessReview from '../components/MyProcessReview.vue'
 
+import RiskOwn from '../components/RiskOwn.vue'
+import RiskRelated from '../components/RiskRelated.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -65,6 +68,14 @@ export default new Router({
             {
                 path: 'MyDevice',
                 component: MyDevice
+            },
+            {
+                path: 'RiskOwn',
+                component: RiskOwn
+            },
+            {
+                path: 'RiskRelated',
+                component: RiskRelated
             }
             ]
         },

@@ -73,6 +73,20 @@
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+          <el-submenu index="5">
+            <template slot="title">
+              <i class="el-icon-warning-outline"></i>风险信息
+            </template>
+            <el-menu-item-group>
+              <template slot="title">查看风险</template>
+              <el-menu-item index="/home/riskrelated">
+                <i class="el-icon-star-off"></i>相关风险
+              </el-menu-item>
+              <el-menu-item index="/home/riskown">
+                <i class="el-icon-bell"></i>责任风险
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
         </el-menu>
       </el-aside>
 

@@ -448,14 +448,6 @@ export default {
   position: relative;
 }
 
-.to-detail {
-  background-color: #909399;
-  position: absolute;
-  right: 15px;
-  top: 70%;
-  transform: translateY(-50%);
-}
-
 p {
   font-size: 13px;
   line-height: 1.7;
