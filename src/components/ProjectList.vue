@@ -32,6 +32,9 @@
           <template slot-scope="scope">
             <el-tag type="success" v-if="scope.row.state === '申请立项'">{{scope.row.state}}</el-tag>
             <el-tag type="danger" v-else-if="scope.row.state === '驳回立项'">{{scope.row.state}}</el-tag>
+            <el-tag type="info" v-else-if="scope.row.state == '已结束'">{{scope.row.state}}</el-tag>
+            <el-tag type="warning" v-else-if="scope.row.state == '已归档'">{{scope.row.state}}</el-tag>
+            <el-tag type="warning" v-else-if="scope.row.state == '已交付'">{{scope.row.state}}</el-tag>
             <el-tag v-else>{{scope.row.state}}</el-tag>
             <el-row>项目名称：{{scope.row.projectName}}</el-row>
             <el-row>项目周期：{{scope.row.expStartDate.slice(0,10)}} 至 {{scope.row.expEndDate.slice(0,10)}}</el-row>
