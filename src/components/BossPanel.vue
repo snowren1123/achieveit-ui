@@ -49,7 +49,7 @@ export default {
 
 <style scoped>
 .el-header {
-  background-color: #b3c0d1;
+  background-color: #afdfe4;
   color: #333;
   line-height: 60px;
 }
@@ -67,6 +67,8 @@ export default {
   position: absolute;
   right: 2%;
   top: 10px;
+  background-color: #ffc20e;
+  border-color: transparent;
 }
 
 .el-table-column {
