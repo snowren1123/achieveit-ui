@@ -18,12 +18,12 @@
         <el-table-column label="功能模块">
           <template
             slot-scope="scope"
-          >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
+          >{{scope.row.primaryFunction}} / {{scope.row.secondaryFunction}}</template>
         </el-table-column>
         <el-table-column label="活动范围">
           <template
             slot-scope="scope"
-          >{{scope.row.primaryFunction}} / {{scope.row.secondaryFunction}}</template>
+          >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
         </el-table-column>
         <el-table-column prop="date" label="日期" width="120" sortable></el-table-column>
         <el-table-column label="时间" width="140">
