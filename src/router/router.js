@@ -27,6 +27,7 @@ import MyProcessReview from '../components/MyProcessReview.vue'
 
 import RiskOwn from '../components/RiskOwn.vue'
 import RiskRelated from '../components/RiskRelated.vue'
+import RiskManagement from '../components/RiskManagement.vue'
 
 Vue.use(Router)
 
@@ -137,6 +138,10 @@ export default new Router({
                 {
                     path: 'ReviewList',
                     component: BasicReviewInfo
+                },
+                {
+                    path: 'RiskManagement',
+                    component: RiskManagement
                 }
             ]
         }

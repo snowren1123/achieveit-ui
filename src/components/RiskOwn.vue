@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     getRiskOwnList() {
-      axios.get("/api/risk/Owner/" + this.personId).then(response => {
+      axios.get("/api/risk/owner/" + this.personId).then(response => {
         console.log(response.data);
         if (response.data.code === 0) {
           this.riskOwnList = response.data.data;

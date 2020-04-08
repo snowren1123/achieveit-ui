@@ -21,7 +21,7 @@
               <i class="el-icon-message"></i>项目信息
             </template>
             <el-menu-item-group>
-              <template slot="title">基本信息</template>
+              <template slot="title">Basic</template>
               <el-menu-item index="/project/basic">
                 <i class="el-icon-info"></i>属性信息
               </el-menu-item>
@@ -29,7 +29,7 @@
                 <i class="el-icon-s-custom"></i>客户信息
               </el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group title="项目组成员">
+            <el-menu-item-group title="Members">
               <el-menu-item index="/project/team">
                 <i class="el-icon-user"></i>成员管理
               </el-menu-item>
@@ -39,18 +39,10 @@
             <template slot="title">
               <i class="el-icon-brush"></i>项目操作
             </template>
-            <el-menu-item-group>
-              <template slot="title">分组1</template>
-              <el-menu-item index="3-1">
-                <i class="el-icon-notebook-1"></i>申请归档
-              </el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="3-3">
+            <el-menu-item-group title="To be solved">
+              <el-menu-item index="/project/riskmanagement">
                 <i class="el-icon-warning-outline"></i>风险管理
               </el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组3">
               <el-submenu index="3-5">
                 <template slot="title">
                   <i class="el-icon-data-analysis"></i>评审缺陷
@@ -58,15 +50,9 @@
                 <el-menu-item index="/project/reviewlist">
                   <i class="el-icon-toilet-paper"></i>评缺查看
                 </el-menu-item>
-                <el-menu-item index="3-5-2">
-                  <i class="el-icon-mic"></i>评缺报告
-                </el-menu-item>
-                <el-menu-item index="3-5-3">
-                  <i class="el-icon-coordinate"></i>评缺处理
-                </el-menu-item>
               </el-submenu>
             </el-menu-item-group>
-            <el-menu-item-group title="分组4">
+            <el-menu-item-group title="Devices">
               <el-menu-item index="/project/projectdevice">
                 <template slot="title">
                   <i class="el-icon-printer"></i>设备管理

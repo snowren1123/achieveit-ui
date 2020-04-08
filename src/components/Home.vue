@@ -84,10 +84,10 @@
             <el-menu-item-group>
               <template slot="title">查看风险</template>
               <el-menu-item index="/home/riskrelated">
-                <i class="el-icon-star-off"></i>相关风险
+                <i class="el-icon-star-off"></i>与我相关
               </el-menu-item>
               <el-menu-item index="/home/riskown">
-                <i class="el-icon-bell"></i>责任风险
+                <i class="el-icon-bell"></i>担责风险
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>

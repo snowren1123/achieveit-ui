@@ -1,0 +1,255 @@
+<template>
+  <el-main>
+    <el-card shadow="always">
+      <!-- 上传 / 下载入口 -->
+      <el-row type="flex" justify="space-between" align="middle" style="height: 36px;">
+        <el-col :span="8">
+          <div style="font-size:18px">风险信息管理</div>
+        </el-col>
+        <el-col :span="5" style="display: flex;">
+          <el-upload
+            ref="uploadRiskExcel"
+            action="/api/upload/risk"
+            accept=".xlsx, .xls"
+            :headers="uploadHeaders"
+            :on-preview="handlePreview"
+            :on-success="handleSuccess"
+            :limit="1"
+            :file-list="excelFileList"
+            :show-file-list="isUpload"
+            style="display: flex;"
+          >
+            <el-button type="primary" size="medium" round plain>
+              <i class="el-icon-document-add"></i>上传
+            </el-button>
+          </el-upload>
+
+          <el-button
+            class="btn-dwn"
+            type="success"
+            size="medium"
+            @click="downloadRiskExcel()"
+            round
+            plain
+          >
+            <i class="el-icon-download"></i>下载
+          </el-button>
+        </el-col>
+      </el-row>
+      <!-- 风险列表 -->
+      <el-table
+        :data="riskList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :default-sort="{prop: 'riskId'}"
+        border
+        stripe
+      >
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <el-form label-position="left" inline class="demo-table-expand">
+              <el-form-item label="风险描述">
+                <span>{{ props.row.description }}</span>
+              </el-form-item>
+              <el-form-item label="风险应对策略">
+                <span>{{ props.row.reactiveStrategy }}</span>
+              </el-form-item>
+              <el-form-item label="风险相关人员">
+                <el-tag
+                  class="tag-relate"
+                  v-for="person in props.row.riskRelatedIds"
+                  :key="person.riskRelatedId"
+                  closable
+                  type="danger"
+                  @close="tagHandleClose(scope.row.riskId, person.riskRelatedId)"
+                >{{ person.riskRelatedId }}</el-tag>
+                <el-button class="button-new-tag" size="small" type="success" @click="addRiskRelatedId()" plain>+ 新增</el-button>
+                <el-button size="small" icon="el-icon-refresh" @click="allRelatedRefresh()" circle></el-button>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
+        <el-table-column label="风险ID" prop="riskId" sortable></el-table-column>
+        <el-table-column label="风险类型" prop="type"></el-table-column>
+        <el-table-column label="风险等级" prop="riskLevel" sortable></el-table-column>
+        <el-table-column label="风险状态" prop="riskState"></el-table-column>
+        <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable></el-table-column>
+        <el-table-column label="风险影响度" prop="influence"></el-table-column>
+        <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
+      </el-table>
+
+      <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[6, 10, 15, 20]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
+    </el-card>
+  </el-main>
+</template>
+
+<script>
+import axios from "axios";
+import qs from "qs";
+import Cookie from "js-cookie";
+import { mapState } from "vuex";
+
+export default {
+  data() {
+    return {
+      riskList: [],
+      riskRelatesList: [],
+      riskRelateIds: {},
+      currentPage: 1,
+      pageSize: 6,
+      total: 0,
+      excelFileList: [],
+      uploadHeaders: {
+        Authorization: "Bearer " + Cookie.get("token")
+      },
+      isUpload: true
+    };
+  },
+  created() {
+    this.getRiskList();
+  },
+  computed: {
+    ...mapState(["personId"]),
+    ...mapState(["projectBasicId"])
+  },
+  methods: {
+    getRiskList() {
+      axios.get("/api/risk/project/" + this.projectBasicId).then(response => {
+        console.log(response.data);
+        if (response.data.code === 0) {
+          this.riskList = response.data.data;
+          this.total = this.riskList.length;
+          this.getRiskRelatesList();
+        } else {
+          this.$message.error("获取项目风险列表失败！");
+        }
+      });
+    },
+    // 获取风险相关人员，为方便显示，将其放入tableData：riskList的属性中保存
+    getRiskRelatesList() {
+      console.log(this.riskList);
+      this.riskList.forEach(risk => {
+        // var riskRelatesRec = {
+        //   riskId: "",
+        //   riskRelatedIds: []
+        // };
+        // riskRelatesRec.riskId = risk.riskId;
+        // console.log(this.projectBasicId);
+        //var riskIdKey = risk.riskId;
+        axios
+          .get("/api/risk/related", {
+            params: { projectId: this.projectBasicId, riskId: risk.riskId }
+          })
+          .then(response => {
+            if (response.data.code === 0) {
+              //  var tempData = response.data.data;
+              this.$set(risk, "riskRelatedIds", response.data.data);
+              //   tempData.forEach(item => {
+              //     riskRelatesRec.riskRelatedIds.push(item.riskRelatedId);
+              //   });
+            } else {
+              this.$message.error(risk.riskId + "风险相关人员获取失败！");
+            }
+          });
+        //this.riskRelatesList.push(riskRelatesRec);
+      });
+      //console.log(this.riskRelatesList);
+      console.log(this.riskList);
+    },
+    downloadRiskExcel() {
+      axios
+        .get("/api/download/risk/" + this.projectBasicId, {
+          responseType: "blob" //告诉服务器我们需要的响应格式
+        })
+        .then(response => {
+          var blob = new Blob([response.data], {
+            type: "application/vnd.ms-excel" //将会被放入到blob中的数组内容的MIME类型
+          });
+          var objectUrl = URL.createObjectURL(blob); //生成一个装有blob的url
+          window.location.href = objectUrl; //浏览器打开这个url
+          window.URL.revokeObjectURL(objectUrl); // 释放url
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    // 上传excel对返回数据的处理 （有疑问）
+    handleSuccess(response, file, fileList) {
+      this.$message.success("上传文件成功！");
+      this.isUpload = false;
+      this.excelFileList = [];
+      //console.log(response.data);
+      var updateArray = response.data;
+      updateArray.forEach(updateObj => {
+        updateObj.projectId = this.projectBasicId;
+      });
+      console.log(updateArray);
+      axios.post("/api/risk", updateArray).then(response => {
+        if (response.code === 0) {
+          console.log("Successfully update risks.");
+        }
+      });
+      this.getRiskList();
+    },
+    // 风险相关人员删除
+    tagHandleClose(riskId, relatedPersonId) {},
+    // 风险相关人员新增
+    addRiskRelatedId() {},
+    // 全量修改相关人员
+    allRelatedRefresh() {}
+  }
+};
+</script>
+
+<style scoped>
+.el-table {
+  margin: 15px 0;
+}
+
+.el-card {
+  padding-top: 10px;
+}
+
+.btn-dwn {
+  margin-left: 20px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.tag-relate {
+  margin-right: 10px;
+}
+
+.demo-table-expand label {
+  font-weight: bolder;
+  width: 90px;
+  color: #99a9bf;
+}
+
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
+</style>
