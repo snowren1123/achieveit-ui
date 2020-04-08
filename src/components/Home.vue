@@ -36,7 +36,9 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <i class="el-icon-date"></i>工时管理
+              <el-badge :value="checkTimeSheetTotal" class="item">
+                <i class="el-icon-date"></i>工时管理
+              </el-badge>
             </template>
             <el-menu-item-group>
               <template slot="title">查看工时</template>
@@ -44,7 +46,9 @@
                 <i class="el-icon-timer"></i>我的工时
               </el-menu-item>
               <el-menu-item index="/home/checktimesheet">
-                <i class="el-icon-finished"></i>工时审批
+                <el-badge :value="checkTimeSheetTotal" class="item">
+                  <i class="el-icon-finished"></i>工时审批
+                </el-badge>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
@@ -110,11 +114,32 @@ export default {
   },
   created() {
     this.getUserInfo();
+    this.getTimeSheetList();
   },
   computed: {
-    ...mapState(["personId"])
+    ...mapState(["personId"]),
+    checkTimeSheetTotal: {
+      //需要监听的数据
+      get() {
+        return this.$store.state.checkTimeSheetTotal;
+      },
+      set(val) {}
+    }
+  },
+  watch: {
+    checkTimeSheetTotal(newVal, oldVal) {}
   },
   methods: {
+    getTimeSheetList() {
+      axios.get("/api/timesheet/boss").then(response => {
+        if (response.data.code === 0) {
+          this.$store.commit(
+            "setCheckTimeSheetTotal",
+            response.data.data.length
+          );
+        }
+      });
+    },
     getUserInfo() {
       axios.get("/api/employee/" + this.personId).then(response => {
         if (response.data.code === 0) {
@@ -152,5 +177,9 @@ export default {
 
 .el-header div img {
   width: 60px;
+}
+
+.item {
+  margin-right: 40px;
 }
 </style>

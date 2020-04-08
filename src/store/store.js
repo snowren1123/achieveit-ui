@@ -6,14 +6,18 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         personId: {},
-        projectBasicId: {}
+        projectBasicId: {},
+        checkTimeSheetTotal: 0
     },
     mutations: {
         setUserId(state, personId) {
             state.personId = personId;
         },
-        setProjectBasicId(state, projectId){
+        setProjectBasicId(state, projectId) {
             state.projectBasicId = projectId;
+        },
+        setCheckTimeSheetTotal(state, checkTimeSheetTotal) {
+            state.checkTimeSheetTotal = checkTimeSheetTotal;
         }
     }
 })

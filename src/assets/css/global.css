@@ -6,3 +6,9 @@ body,
     margin: 0;
     padding: 0;
 }
+
+.el-badge__content.is-fixed {
+    position: absolute;
+    top: 11px;
+    right: 0px;
+}

@@ -90,7 +90,7 @@ export default {
     this.getTimeSheetList();
   },
   computed: {
-    ...mapState(["personId"])
+    ...mapState(["personId", "checkTimeSheetTotal"])
   },
   methods: {
     getTimeSheetList() {
@@ -158,6 +158,10 @@ export default {
           console.log(response);
           if (response.data.code === 0) {
             this.getTimeSheetList();
+            this.$store.commit(
+              "setCheckTimeSheetTotal",
+              --this.checkTimeSheetTotal
+            );
             this.$message.success("操作成功！");
           } else {
             this.$message.error(response.data.data);

@@ -227,7 +227,7 @@ export default {
     this.getTimeSheetList();
   },
   computed: {
-    ...mapState(["personId"])
+    ...mapState(["personId", "checkTimeSheetTotal"])
   },
   methods: {
     getTimeSheetList() {
@@ -350,6 +350,10 @@ export default {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
         this.timesheetInfo.state = "已提交";
+        this.$store.commit(
+          "setCheckTimeSheetTotal",
+          ++this.checkTimeSheetTotal
+        );
         this.submitForm();
       });
     },
@@ -409,12 +413,14 @@ export default {
       }
 
       temp.state = "已提交";
+      this.$store.commit("setCheckTimeSheetTotal", ++this.checkTimeSheetTotal);
       axios.post("/api/timesheet", qs.stringify(temp)).then(response => {
         console.log(response);
         if (response.data.code === 0) {
           this.getTimeSheetList();
           this.$message.success("提交成功！");
         } else {
+          this.getTimeSheetList();
           this.$message.error(response.data.data);
         }
       });
