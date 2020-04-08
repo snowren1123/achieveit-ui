@@ -37,6 +37,31 @@
             >
               <h2 slot="title">{{ scope.row.projectName }}</h2>
               <!-- 显示checkList -->
+              <div class="checkdiv">
+                <el-checkbox
+                  :indeterminate="isIndeterminate"
+                  v-model="isCheckAll"
+                  @change="handleCheckAllChange"
+                >全部选择</el-checkbox>
+                <div style="margin: 15px 0;"></div>
+                <el-checkbox-group v-model="checkedAssets" @change="handleCheckedAssetsChange">
+                  <el-checkbox
+                    v-for="asset in checkAssetsOptsList"
+                    :label="asset"
+                    :key="asset"
+                  >{{ asset }}</el-checkbox>
+                </el-checkbox-group>
+                <el-button
+                  v-show="isCheckAll"
+                  style="margin: 15px 0;"
+                  type="success"
+                  icon="el-icon-present"
+                  size="small"
+                  plain
+                  round
+                  @click="setArchived(scope.row.projectId, scope.row.projectName)"
+                >归档</el-button>
+              </div>
             </el-drawer>
           </template>
         </el-table-column>
@@ -54,12 +79,17 @@ export default {
     return {
       endProjectsList: [],
       drawer: false,
-      direction: 'rtl'
+      direction: "rtl",
+      checkAssetsOptsList: [],
+      checkedAssets: [],
+      isIndeterminate: false,
+      isCheckAll: false
     };
   },
 
   created() {
     this.getEndProjects();
+    this.getCheckAssets();
   },
 
   methods: {
@@ -78,6 +108,45 @@ export default {
             this.$message.error(response.data.data);
           }
         });
+    },
+    getCheckAssets() {
+      axios.get("/api/check_assets").then(response => {
+        if (response.data.code === 0) {
+          var tempData = response.data.data;
+          tempData.forEach(item => {
+            this.checkAssetsOptsList.push(item.assetItem);
+          });
+          console.log(this.checkAssetsOptsList);
+        } else {
+          this.$message.error("无法获取可检查的资产项！");
+        }
+      });
+    },
+    setArchived(projectId, projectName) {
+      axios
+        .put(
+          "/api/state",
+          qs.stringify({
+            projectId: projectId,
+            state: "已归档"
+          })
+        )
+        .then(response => {
+          if (response.data.code === 0) {
+            this.drawer = false;
+            this.$message.success(projectName + "已成功归档!");
+          }
+        });
+    },
+    handleCheckAllChange(val) {
+      this.checkedAssets = val ? this.checkAssetsOptsList : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedAssetsChange(value) {
+      var checkedCount = value.length;
+      this.isCheckAll = checkedCount === this.checkAssetsOptsList.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.checkAssetsOptsList.length;
     },
     handleCloseDrawer(done) {
       this.$confirm("确认关闭？")
@@ -102,6 +171,13 @@ export default {
   right: 30px;
   top: 75%;
   transform: translateY(-50%);
+}
+
+.checkdiv {
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 .item {
