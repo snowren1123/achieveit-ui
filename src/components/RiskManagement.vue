@@ -95,7 +95,12 @@
                   @click="showInput(props.row)"
                   plain
                 >+ 新增</el-button>
-                <el-button size="small" icon="el-icon-refresh" @click="allRelatedRefresh()" circle></el-button>
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  @click="showRefreshDialog(props.row.riskId)"
+                  circle
+                ></el-button>
               </el-form-item>
             </el-form>
           </template>
@@ -141,6 +146,22 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
+
+      <!-- 全量修改相关人员 -->
+      <el-dialog title="重置风险相关人员" :visible.sync="riskRefreshVisible">
+        <el-checkbox-group v-model="checkedRefreshIds" :min="1">
+          <el-checkbox
+            v-for="member in members"
+            :label="member.employeeId"
+            :key="member.employeeId"
+            style="margin-bottom: 10px;"
+          >{{ member.employeeId }}</el-checkbox>
+        </el-checkbox-group>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="allRelatedRefresh(checkedRefreshIds)">确 定</el-button>
+          <el-button @click="riskRefreshVisible = false">取 消</el-button>
+        </div>
+      </el-dialog>
 
       <!-- 修改风险对话框 -->
       <el-dialog title="修改项目风险" :visible.sync="editDialogFormVisible" @close="editDialogClosed">
@@ -241,11 +262,7 @@
           ref="addRiskDialogFormRef"
         >
           <el-form-item label="风险ID" prop="riskId" required>
-            <el-input
-              placeholder="例：risk-00x"
-              v-model="riskInfo.riskId"
-              style="width:300px;"
-            ></el-input>
+            <el-input placeholder="例：risk-00x" v-model="riskInfo.riskId" style="width:300px;"></el-input>
           </el-form-item>
           <el-form-item label="风险类型" prop="type">
             <el-input placeholder="例：login" v-model="riskInfo.type" style="width:300px;"></el-input>
@@ -347,6 +364,10 @@ export default {
       // 新增风险相关人员
       members: [],
       inputValue: "",
+      // 全量修改相关人员
+      checkedRefreshIds: [],
+      tempSaveRiskId: "",
+      riskRefreshVisible: false,
       // 新增一条风险
       addRiskDialogVisible: false,
       addRiskDialogFormRules: {},
@@ -383,7 +404,7 @@ export default {
         if (response.data.code === 0) {
           this.riskList = response.data.data;
           this.total = this.riskList.length;
-          if(this.total === 0){
+          if (this.total === 0) {
             this.showUploadBtn = true;
           }
           this.getRiskRelatesList();
@@ -454,11 +475,10 @@ export default {
         if (response.data.code === 0) {
           console.log("Successfully update risks.");
         } else {
-          this.$message.error("导入风险失败！")
+          this.$message.error("导入风险失败！");
         }
         this.getRiskList();
       });
-      
     },
     // 风险相关人员删除
     tagHandleClose(riskId, relatedPersonId) {
@@ -522,7 +542,30 @@ export default {
       }, 300);
     },
     // 全量修改相关人员
-    allRelatedRefresh() {},
+    showRefreshDialog(riskId) {
+      this.tempSaveRiskId = riskId;
+      this.riskRefreshVisible = true;
+    },
+    allRelatedRefresh(checkedRefreshIds) {
+      console.log(checkedRefreshIds);
+      var packedData = [];
+      checkedRefreshIds.forEach(member => {
+        var packedObj = {
+          projectId: this.projectBasicId,
+          riskId: this.tempSaveRiskId,
+          riskRelatedId: member
+        };
+        packedData.push(packedObj);
+      });
+      console.log(packedData);
+      axios.put("/api/risk/relates", packedData).then(response => {
+        if (response.data.code === 0) {
+          this.getRiskRelatesList();
+          this.$message.success("成功重置风险相关人员！");
+        }
+      });
+      this.riskRefreshVisible = false;
+    },
     // 新增一条风险
     addRiskDialogClosed() {
       this.$refs.addRiskDialogFormRef.resetFields();
