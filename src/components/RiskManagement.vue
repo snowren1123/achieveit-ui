@@ -36,6 +36,7 @@
           </el-button>
         </el-col>
       </el-row>
+
       <!-- 风险列表 -->
       <el-table
         :data="riskList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -59,9 +60,32 @@
                   :key="person.riskRelatedId"
                   closable
                   type="danger"
-                  @close="tagHandleClose(scope.row.riskId, person.riskRelatedId)"
+                  @close="tagHandleClose(props.row.riskId, person.riskRelatedId)"
                 >{{ person.riskRelatedId }}</el-tag>
-                <el-button class="button-new-tag" size="small" type="success" @click="addRiskRelatedId()" plain>+ 新增</el-button>
+                <el-select
+                  placeholder="请选择"
+                  class="input-new-tag"
+                  v-if="props.row.inputVisible"
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @blur="addRiskRelatedId(props.row)"
+                >
+                  <el-option
+                    v-for="item in members"
+                    :key="item.employeeId"
+                    :label="item.employeeId"
+                    :value="item.employeeId"
+                  ></el-option>
+                </el-select>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  type="success"
+                  @click="showInput(props.row)"
+                  plain
+                >+ 新增</el-button>
                 <el-button size="small" icon="el-icon-refresh" @click="allRelatedRefresh()" circle></el-button>
               </el-form-item>
             </el-form>
@@ -109,7 +133,11 @@ export default {
       uploadHeaders: {
         Authorization: "Bearer " + Cookie.get("token")
       },
-      isUpload: true
+      isUpload: true,
+
+      // 新增风险相关人员
+      members: [],
+      inputValue: ""
     };
   },
   created() {
@@ -136,31 +164,20 @@ export default {
     getRiskRelatesList() {
       console.log(this.riskList);
       this.riskList.forEach(risk => {
-        // var riskRelatesRec = {
-        //   riskId: "",
-        //   riskRelatedIds: []
-        // };
-        // riskRelatesRec.riskId = risk.riskId;
-        // console.log(this.projectBasicId);
-        //var riskIdKey = risk.riskId;
         axios
           .get("/api/risk/related", {
             params: { projectId: this.projectBasicId, riskId: risk.riskId }
           })
           .then(response => {
             if (response.data.code === 0) {
-              //  var tempData = response.data.data;
               this.$set(risk, "riskRelatedIds", response.data.data);
-              //   tempData.forEach(item => {
-              //     riskRelatesRec.riskRelatedIds.push(item.riskRelatedId);
-              //   });
+              this.$set(risk, "inputVisible", false);
             } else {
               this.$message.error(risk.riskId + "风险相关人员获取失败！");
             }
           });
-        //this.riskRelatesList.push(riskRelatesRec);
       });
-      //console.log(this.riskRelatesList);
+
       console.log(this.riskList);
     },
     downloadRiskExcel() {
@@ -208,9 +225,66 @@ export default {
       this.getRiskList();
     },
     // 风险相关人员删除
-    tagHandleClose(riskId, relatedPersonId) {},
+    tagHandleClose(riskId, relatedPersonId) {
+      axios
+        .delete("/api/risk/related", {
+          data: {
+            projectId: this.projectBasicId,
+            riskId: riskId,
+            riskRelatedId: relatedPersonId
+          }
+        })
+        .then(response => {
+          console.log(response);
+          if (response.data.code === 0) {
+            this.getRiskRelatesList();
+          } else {
+            this.$message.error("删除项目相关人员失败！");
+          }
+        });
+    },
     // 风险相关人员新增
-    addRiskRelatedId() {},
+    showInput(row) {
+      row.inputVisible = true;
+      this.getProjectMembers();
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.focus();
+      });
+    },
+    getProjectMembers() {
+      axios.get("/api/member/" + this.projectBasicId).then(response => {
+        if (response.data.code === 0) {
+          this.members = response.data.data;
+          console.log(this.members);
+        }
+      });
+    },
+    addRiskRelatedId(row) {
+      setTimeout(async () => {
+        console.log(this.inputValue);
+        if (this.inputValue) {
+          axios
+            .post("/api/risk/related", {
+              projectId: this.projectBasicId,
+              riskId: row.riskId,
+              riskRelatedId: this.inputValue
+            })
+            .then(response => {
+              console.log(response.data);
+              if (response.data.code === 0) {
+                row.inputVisible = false;
+                this.inputValue = "";
+                this.getRiskRelatesList();
+              } else {
+                this.$message.error("添加项目相关人员失败！");
+              }
+            });
+        } else {
+          row.inputVisible = false;
+          this.inputValue = "";
+        }
+      }, 300);
+    },
     // 全量修改相关人员
     allRelatedRefresh() {}
   }
@@ -229,12 +303,19 @@ export default {
 .btn-dwn {
   margin-left: 20px;
 }
+
 .button-new-tag {
   margin-left: 10px;
   height: 32px;
   line-height: 30px;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
 }
 
 .tag-relate {
@@ -250,6 +331,6 @@ export default {
 .demo-table-expand .el-form-item {
   margin-right: 0;
   margin-bottom: 0;
-  width: 50%;
+  width: 100%;
 }
 </style>

@@ -152,12 +152,13 @@
         </el-form-item>
         <el-form-item label="时间范围" prop="time">
           <el-time-picker
-            is-range
-            v-model="time"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围"
+            v-model="timesheetInfo.startTime"
+            placeholder="开始时间"
+            value-format="HH:mm:ss"
+          ></el-time-picker>
+          <el-time-picker
+            v-model="timesheetInfo.endTime"
+            placeholder="结束时间"
             value-format="HH:mm:ss"
           ></el-time-picker>
         </el-form-item>
@@ -191,7 +192,6 @@ export default {
       secondaryFunctions: [],
       primaryActivities: [],
       secondaryActivities: [],
-      time: [new Date(2020, 6, 1, 9, 0, 0), new Date(2020, 6, 1, 18, 0, 0)],
       flag: false,
       addDialogFormVisible: false,
       addDialogFormRules: {
@@ -341,19 +341,19 @@ export default {
     addTimeSheet() {
       this.getProjectIds();
       this.getPrimaryActivities();
+      this.addFormTitle = "新增工时信息";
       this.addDialogFormVisible = true;
     },
     addDialogClosed() {
       this.$refs.addDialogFormRef.resetFields();
+      for (var item in this.timesheetInfo) {
+        this.timesheetInfo[item] = "";
+      }
     },
     submitToBoss() {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
         this.timesheetInfo.state = "已提交";
-        this.$store.commit(
-          "setCheckTimeSheetTotal",
-          ++this.checkTimeSheetTotal
-        );
         this.submitForm();
       });
     },
@@ -365,25 +365,26 @@ export default {
       });
     },
     submitForm() {
-      this.timesheetInfo.startTime = this.time[0];
-      this.timesheetInfo.endTime = this.time[1];
-
       axios
         .post("/api/timesheet", qs.stringify(this.timesheetInfo))
         .then(response => {
           console.log(response);
           if (response.data.code === 0) {
             this.getTimeSheetList();
+            if (this.timesheetInfo.state == "已提交")
+              this.$store.commit(
+                "setCheckTimeSheetTotal",
+                ++this.checkTimeSheetTotal
+              );
             this.$message.success("成功！");
           } else {
             this.$message.error(response.data.data);
           }
         });
-      this.addFormTitle = "新增工时信息";
       this.addDialogFormVisible = false;
     },
 
-    // 修改工时
+    // 表格每列按钮修改工时
     editTimeSheet(temp) {
       this.addFormTitle = "修改工时信息";
       this.flag = true;
@@ -396,7 +397,7 @@ export default {
       this.addDialogFormVisible = true;
       this.flag = false;
     },
-    // 提交工时
+    // 表格每列按钮提交工时
     async submitTimeSheet(temp) {
       const confirmResult = await this.$confirm(
         "此操作将提交该工时记录，是否继续？",
@@ -413,11 +414,14 @@ export default {
       }
 
       temp.state = "已提交";
-      this.$store.commit("setCheckTimeSheetTotal", ++this.checkTimeSheetTotal);
       axios.post("/api/timesheet", qs.stringify(temp)).then(response => {
         console.log(response);
         if (response.data.code === 0) {
           this.getTimeSheetList();
+          this.$store.commit(
+            "setCheckTimeSheetTotal",
+            ++this.checkTimeSheetTotal
+          );
           this.$message.success("提交成功！");
         } else {
           this.getTimeSheetList();
