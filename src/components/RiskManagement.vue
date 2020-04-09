@@ -6,7 +6,16 @@
         <el-col :span="8">
           <div style="font-size:18px">风险信息管理</div>
         </el-col>
-        <el-col :span="5" style="display: flex;">
+        <el-col :span="3" style="display: flex;">
+          <el-button
+            class="btn-dwn"
+            type="warning"
+            size="medium"
+            icon="el-icon-plus"
+            @click="addRiskDialogVisible=true"
+            plain
+            circle
+          ></el-button>
           <el-upload
             ref="uploadRiskExcel"
             action="/api/upload/risk"
@@ -19,8 +28,8 @@
             :show-file-list="isUpload"
             style="display: flex;"
           >
-            <el-button type="primary" size="medium" round plain>
-              <i class="el-icon-document-add"></i>上传
+            <el-button v-show="showUploadBtn" type="primary" size="medium" plain circle>
+              <i class="el-icon-document-add"></i>
             </el-button>
           </el-upload>
 
@@ -29,10 +38,10 @@
             type="success"
             size="medium"
             @click="downloadRiskExcel()"
-            round
             plain
+            circle
           >
-            <i class="el-icon-download"></i>下载
+            <i class="el-icon-download"></i>
           </el-button>
         </el-col>
       </el-row>
@@ -170,7 +179,7 @@
               placeholder="请选择风险状态"
               style="width:300px;"
             >
-              <el-option v-for="item in ['潜在','已出现','已解决']" :key="item" :label="item" :value="item"></el-option>
+              <el-option v-for="item in riskStateOpts" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="风险跟踪频度" prop="riskTrackFrequency">
@@ -221,6 +230,94 @@
           <el-button @click="editDialogFormVisible = false">取消</el-button>
         </div>
       </el-dialog>
+
+      <!-- 新建风险对话框 -->
+      <el-dialog title="新建项目风险" :visible.sync="addRiskDialogVisible" @close="addRiskDialogClosed">
+        <el-form
+          :model="riskInfo"
+          label-width="100px"
+          label-position="left"
+          :rules="addRiskDialogFormRules"
+          ref="addRiskDialogFormRef"
+        >
+          <el-form-item label="风险ID" prop="riskId" required>
+            <el-input
+              placeholder="例：risk-00x"
+              v-model="riskInfo.riskId"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险类型" prop="type">
+            <el-input placeholder="例：login" v-model="riskInfo.type" style="width:300px;"></el-input>
+          </el-form-item>
+          <el-form-item label="风险等级" prop="riskLevel">
+            <el-input
+              placeholder="0-5的整数"
+              v-model="riskInfo.riskLevel"
+              type="number"
+              max="5"
+              min="0"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险状态" prop="riskState">
+            <el-select
+              v-model="riskInfo.riskState"
+              clearable
+              placeholder="请选择风险状态"
+              style="width:300px;"
+            >
+              <el-option v-for="item in riskStateOpts" :key="item" :label="item" :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="风险跟踪频度" prop="riskTrackFrequency">
+            <el-input
+              :placeholder="riskInfo.riskTrackFrequency"
+              v-model="riskInfo.riskTrackFrequency"
+              type="number"
+              max="1"
+              min="0"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险责任人" prop="riskOwnerId">
+            <el-select
+              v-model="riskInfo.riskOwnerId"
+              clearable
+              placeholder="请选择风险责任人"
+              style="width:300px;"
+            >
+              <el-option
+                v-for="item in members"
+                :key="item.employeeId"
+                :label="item.employeeId"
+                :value="item.employeeId"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="风险影响度" prop="influence">
+            <el-input
+              :placeholder="riskInfo.influence"
+              v-model="riskInfo.influence"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险应对策略" prop="reactiveStrategy">
+            <el-input
+              :placeholder="riskInfo.reactiveStrategy"
+              v-model="riskInfo.reactiveStrategy"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险描述" prop="description">
+            <el-input type="textarea" v-model="riskInfo.description" style="width:400px;"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitAddOneRisk()">确认</el-button>
+          <el-button @click="addRiskDialogVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </el-main>
 </template>
@@ -245,11 +342,15 @@ export default {
         Authorization: "Bearer " + Cookie.get("token")
       },
       isUpload: true,
+      showUploadBtn: false,
 
       // 新增风险相关人员
       members: [],
       inputValue: "",
-
+      // 新增一条风险
+      addRiskDialogVisible: false,
+      addRiskDialogFormRules: {},
+      riskStateOpts: ["潜在", "正常", "异常", "紧急", "已解决"],
       // 修改一条风险
       editDialogFormVisible: false,
       editDialogFormRules: {},
@@ -269,6 +370,7 @@ export default {
   },
   created() {
     this.getRiskList();
+    this.getProjectMembers();
   },
   computed: {
     ...mapState(["personId"]),
@@ -281,6 +383,9 @@ export default {
         if (response.data.code === 0) {
           this.riskList = response.data.data;
           this.total = this.riskList.length;
+          if(this.total === 0){
+            this.showUploadBtn = true;
+          }
           this.getRiskRelatesList();
         } else {
           this.$message.error("获取项目风险列表失败！");
@@ -341,14 +446,19 @@ export default {
       var updateArray = response.data;
       updateArray.forEach(updateObj => {
         updateObj.projectId = this.projectBasicId;
+        updateObj.riskOwnerId = this.personId;
+        updateObj.riskState = "潜在";
       });
       console.log(updateArray);
-      axios.post("/api/risk", updateArray).then(response => {
-        if (response.code === 0) {
+      axios.post("/api/risks", updateArray).then(response => {
+        if (response.data.code === 0) {
           console.log("Successfully update risks.");
+        } else {
+          this.$message.error("导入风险失败！")
         }
+        this.getRiskList();
       });
-      this.getRiskList();
+      
     },
     // 风险相关人员删除
     tagHandleClose(riskId, relatedPersonId) {
@@ -413,6 +523,24 @@ export default {
     },
     // 全量修改相关人员
     allRelatedRefresh() {},
+    // 新增一条风险
+    addRiskDialogClosed() {
+      this.$refs.addRiskDialogFormRef.resetFields();
+    },
+    submitAddOneRisk() {
+      this.riskInfo.projectId = this.projectBasicId;
+      console.log(this.riskInfo);
+      axios.post("/api/risk", this.riskInfo).then(response => {
+        if (response.data.code === 0) {
+          this.getRiskList();
+          this.addRiskDialogVisible = false;
+          this.$message.success("新建项目风险成功！");
+        } else {
+          this.$message.error("新建项目风险失败！");
+        }
+        this.riskInfo = {};
+      });
+    },
     // 修改一条风险
     editDialogClosed() {
       this.$refs.editDialogFormRef.resetFields();
@@ -434,6 +562,7 @@ export default {
         } else {
           this.$message.error("修改项目风险失败！");
         }
+        this.riskInfo = {};
       });
     },
 
@@ -456,8 +585,8 @@ export default {
       axios
         .delete("/api/risk", {
           data: {
-            projectId: this.riskInfo.projectId,
-            riskId: this.riskInfo.riskId
+            projectId: row.projectId,
+            riskId: row.riskId
           }
         })
         .then(response => {
@@ -483,7 +612,8 @@ export default {
 }
 
 .btn-dwn {
-  margin-left: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .button-new-tag {
