@@ -90,7 +90,17 @@ export default {
     this.getTimeSheetList();
   },
   computed: {
-    ...mapState(["personId", "checkTimeSheetTotal"])
+    ...mapState(["personId"]),
+    checkTimeSheetTotal: {
+      //需要监听的数据
+      get() {
+        return this.$store.state.checkTimeSheetTotal;
+      },
+      set(val) {}
+    }
+  },
+  watch: {
+    checkTimeSheetTotal(newVal, oldVal) {}
   },
   methods: {
     getTimeSheetList() {
@@ -160,7 +170,7 @@ export default {
             this.getTimeSheetList();
             this.$store.commit(
               "setCheckTimeSheetTotal",
-              --this.checkTimeSheetTotal
+              this.checkTimeSheetTotal - 1
             );
             this.$message.success("操作成功！");
           } else {

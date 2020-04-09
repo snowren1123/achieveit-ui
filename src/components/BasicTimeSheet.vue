@@ -209,6 +209,14 @@ export default {
         ],
         secondaryActivity: [
           { required: true, message: "请选择二级活动", trigger: "change" }
+        ],
+        date: [
+          {
+            type: "string",
+            required: true,
+            message: "请选择日期",
+            trigger: "change"
+          }
         ]
       },
       timesheetInfo: {
@@ -217,6 +225,7 @@ export default {
         secondaryFunction: "",
         primaryActivity: "",
         secondaryActivity: "",
+        date: "",
         startTime: "",
         endTime: "",
         state: ""
@@ -227,7 +236,17 @@ export default {
     this.getTimeSheetList();
   },
   computed: {
-    ...mapState(["personId", "checkTimeSheetTotal"])
+    ...mapState(["personId"]),
+    checkTimeSheetTotal: {
+      //需要监听的数据
+      get() {
+        return this.$store.state.checkTimeSheetTotal;
+      },
+      set(val) {}
+    }
+  },
+  watch: {
+    checkTimeSheetTotal(newVal, oldVal) {}
   },
   methods: {
     getTimeSheetList() {
@@ -339,6 +358,8 @@ export default {
         });
     },
     addTimeSheet() {
+      this.clearProjectsIds();
+      this.clearPrimaryActivities();
       this.getProjectIds();
       this.getPrimaryActivities();
       this.addFormTitle = "新增工时信息";
@@ -354,27 +375,29 @@ export default {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
         this.timesheetInfo.state = "已提交";
-        this.submitForm();
+        this.submitForm(true);
       });
     },
     saveAsDraft() {
       this.$refs.addDialogFormRef.validate(async valid => {
         if (!valid) return;
         this.timesheetInfo.state = "草稿";
-        this.submitForm();
+        this.submitForm(false);
       });
     },
-    submitForm() {
+    submitForm(state) {
+      console.log(this.timesheetInfo);
       axios
         .post("/api/timesheet", qs.stringify(this.timesheetInfo))
         .then(response => {
           console.log(response);
           if (response.data.code === 0) {
             this.getTimeSheetList();
-            if (this.timesheetInfo.state == "已提交")
+            console.log(this.timesheetInfo);
+            if (state)
               this.$store.commit(
                 "setCheckTimeSheetTotal",
-                ++this.checkTimeSheetTotal
+                this.checkTimeSheetTotal + 1
               );
             this.$message.success("成功！");
           } else {
@@ -420,7 +443,7 @@ export default {
           this.getTimeSheetList();
           this.$store.commit(
             "setCheckTimeSheetTotal",
-            ++this.checkTimeSheetTotal
+            this.checkTimeSheetTotal + 1
           );
           this.$message.success("提交成功！");
         } else {

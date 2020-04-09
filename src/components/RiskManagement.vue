@@ -98,6 +98,28 @@
         <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable></el-table-column>
         <el-table-column label="风险影响度" prop="influence"></el-table-column>
         <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-tooltip class="item" effect="dark" content="修改" placement="top">
+              <el-button
+                type="success"
+                icon="el-icon-edit"
+                size="mini"
+                plain
+                @click="editOneRisk(scope.row)"
+              ></el-button>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="删除" placement="top">
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+                plain
+                @click="deleteOneRisk(scope.row)"
+              ></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
       </el-table>
 
       <!-- 分页区域 -->
@@ -110,6 +132,95 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       ></el-pagination>
+
+      <!-- 修改风险对话框 -->
+      <el-dialog title="修改项目风险" :visible.sync="editDialogFormVisible" @close="editDialogClosed">
+        <el-form
+          :model="riskInfo"
+          label-width="100px"
+          label-position="left"
+          :rules="editDialogFormRules"
+          ref="editDialogFormRef"
+        >
+          <el-form-item label="风险ID" prop="riskId">
+            <el-input
+              :placeholder="riskInfo.riskId"
+              v-model="riskInfo.riskId"
+              :disabled="true"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险类型" prop="type">
+            <el-input :placeholder="riskInfo.type" v-model="riskInfo.type" style="width:300px;"></el-input>
+          </el-form-item>
+          <el-form-item label="风险等级" prop="riskLevel">
+            <el-input
+              :placeholder="riskInfo.riskLevel"
+              v-model="riskInfo.riskLevel"
+              type="number"
+              max="5"
+              min="0"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险状态" prop="riskState">
+            <el-select
+              v-model="riskInfo.riskState"
+              clearable
+              placeholder="请选择风险状态"
+              style="width:300px;"
+            >
+              <el-option v-for="item in ['潜在','已出现','已解决']" :key="item" :label="item" :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="风险跟踪频度" prop="riskTrackFrequency">
+            <el-input
+              :placeholder="riskInfo.riskTrackFrequency"
+              v-model="riskInfo.riskTrackFrequency"
+              type="number"
+              max="1"
+              min="0"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险责任人" prop="riskOwnerId">
+            <el-select
+              v-model="riskInfo.riskOwnerId"
+              clearable
+              placeholder="请选择风险责任人"
+              style="width:300px;"
+            >
+              <el-option
+                v-for="item in members"
+                :key="item.employeeId"
+                :label="item.employeeId"
+                :value="item.employeeId"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="风险影响度" prop="influence">
+            <el-input
+              :placeholder="riskInfo.influence"
+              v-model="riskInfo.influence"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险应对策略" prop="reactiveStrategy">
+            <el-input
+              :placeholder="riskInfo.reactiveStrategy"
+              v-model="riskInfo.reactiveStrategy"
+              style="width:300px;"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="风险描述" prop="description">
+            <el-input type="textarea" v-model="riskInfo.description" style="width:400px;"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitEditOneRisk()">确认</el-button>
+          <el-button @click="editDialogFormVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </el-main>
 </template>
@@ -137,7 +248,23 @@ export default {
 
       // 新增风险相关人员
       members: [],
-      inputValue: ""
+      inputValue: "",
+
+      // 修改一条风险
+      editDialogFormVisible: false,
+      editDialogFormRules: {},
+      riskInfo: {
+        projectId: "",
+        riskId: "",
+        type: "",
+        description: "",
+        riskLevel: 0,
+        influence: "",
+        reactiveStrategy: "",
+        riskState: "",
+        riskOwnerId: "",
+        riskTrackFrequency: 0
+      }
     };
   },
   created() {
@@ -177,7 +304,6 @@ export default {
             }
           });
       });
-
       console.log(this.riskList);
     },
     downloadRiskExcel() {
@@ -286,7 +412,63 @@ export default {
       }, 300);
     },
     // 全量修改相关人员
-    allRelatedRefresh() {}
+    allRelatedRefresh() {},
+    // 修改一条风险
+    editDialogClosed() {
+      this.$refs.editDialogFormRef.resetFields();
+    },
+    editOneRisk(row) {
+      Object.assign(this.riskInfo, row);
+      this.$delete(this.riskInfo, "riskRelatedIds");
+      this.$delete(this.riskInfo, "inputVisible");
+      console.log(this.riskInfo);
+      this.getProjectMembers();
+      this.editDialogFormVisible = true;
+    },
+    submitEditOneRisk() {
+      axios.put("/api/risk", this.riskInfo).then(response => {
+        console.log(response.data);
+        if (response.data.code === 0) {
+          this.getRiskList();
+          this.editDialogFormVisible = false;
+        } else {
+          this.$message.error("修改项目风险失败！");
+        }
+      });
+    },
+
+    // 删除一条风险
+    async deleteOneRisk(row) {
+      const confirmResult = await this.$confirm(
+        "此操作将删除该风险，是否继续？",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).catch(err => err);
+
+      if (confirmResult !== "confirm") {
+        return this.$message.info("已取消删除！");
+      }
+
+      axios
+        .delete("/api/risk", {
+          data: {
+            projectId: this.riskInfo.projectId,
+            riskId: this.riskInfo.riskId
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          if (response.data.code === 0) {
+            this.getRiskList();
+          } else {
+            this.$message.error("删除项目风险失败！");
+          }
+        });
+    }
   }
 };
 </script>
