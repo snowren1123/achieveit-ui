@@ -20,9 +20,6 @@
             <el-menu-item index="/boss/pending">
               <i class="el-icon-circle-check"></i>审核项目
             </el-menu-item>
-            <el-menu-item index>
-              <i class="el-icon-edit"></i>审核工时
-            </el-menu-item>
           </el-menu-item-group>
         </el-menu>
       </el-aside>

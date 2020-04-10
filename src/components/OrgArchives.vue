@@ -20,7 +20,7 @@
               <el-col>采用技术：{{scope.row.technology}}</el-col>
             </el-row>
             <el-row>
-              <el-col>项目状态：{{scope.row.state}}</el-col>
+              <el-col>归档地址：{{scope.row.outputLink}}</el-col>
             </el-row>
             <el-tooltip class="item" effect="dark" content="点击查看项目归档情况" placement="top">
               <el-button
@@ -97,7 +97,7 @@ export default {
       axios
         .get("/api/state", {
           params: {
-            state: "已结束"
+            state: "申请归档"
           }
         })
         .then(response => {

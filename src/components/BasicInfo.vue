@@ -9,6 +9,7 @@
         <el-tag type="success" v-show="!editState" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
         <el-tag type="info" v-show="!editState" v-else-if="basicInfo.state == '已结束'">已结束</el-tag>
         <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已归档'">已归档</el-tag>
+        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '申请归档'">申请归档</el-tag>
         <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已交付'">已交付</el-tag>
         <el-tag type="danger" v-show="!editState" v-else-if="basicInfo.state == '驳回立项'">驳回立项</el-tag>
         <el-select
@@ -48,6 +49,17 @@
           round
           plain
         >取消</el-button>
+        <el-dialog title="请输入档案输出地址" :visible.sync="outLinkDialogVisible">
+          <el-form>
+            <el-form-item label="有效地址" label-width="80px" label-position="left">
+              <el-input v-model="outputLink" autocomplete="off" label-position="left"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="submitOutputLink(outputLink)">确 定</el-button>
+            <el-button @click="outLinkDialogVisible = false">取 消</el-button>
+          </div>
+        </el-dialog>
       </el-tab-pane>
       <el-tab-pane label="项目上级">{{ basicInfo.projectBossId }}</el-tab-pane>
       <el-tab-pane label="项目周期">{{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}</el-tab-pane>
@@ -191,7 +203,8 @@ export default {
       },
       stateOptions: [
         { label: "进行中", value: "进行中" },
-        { label: "已结束,申请归档", value: "已结束" },
+        { label: "申请归档", value: "申请归档" },
+        { label: "已结束", value: "已结束" },
         { label: "已交付", value: "已交付" }
       ],
       uploadHeaders: {
@@ -204,11 +217,13 @@ export default {
       addSecFindPriId: 0,
       editFindId: 0,
       editStateValue: "",
+      outputLink: "",
       isUpload: true,
       editFuncVisible: false,
       addPriFuncVisible: false,
       addSecFuncVisible: false,
-      editState: false
+      editState: false,
+      outLinkDialogVisible: false
     };
   },
 
@@ -428,36 +443,61 @@ export default {
         });
     },
 
-    submitState() {
-      this.$confirm(
-        "确认将状态修改为" + this.editStateValue + "?",
-        "确认信息",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-          center: false
-        }
-      )
-        .then(() => {
-          this.basicInfo.state = this.editStateValue;
-          console.log(this.basicInfo.state);
-          this.editState = false;
-          axios.put("/api/state", qs.stringify({
-            projectId: this.projectBasicId,
-            state: this.editStateValue
-          })).then(response => {
-              if(response.data.code === 0){
-                this.$message.success("已修改状态为" + this.basicInfo.state);
-              }
-          })
+    submitOutputLink(outputLink) {
+      axios
+        .put("/api/projectinfo/outputlink", {
+          projectId: this.projectBasicId,
+          outputLink: outputLink
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "取消修改"
-          });
+        .then(response => {
+          if (response.data.code === 0) {
+            this.$message.success("添加归档链接成功！");
+          } else {
+            this.$message.error("添加归档链接失败！");
+          }
         });
+      this.outLinkDialogVisible = false;
+    },
+
+    submitState() {
+      if (this.editStateValue == "申请归档") {
+        this.outLinkDialogVisible = true;
+      } else {
+        this.$confirm(
+          "确认将状态修改为" + this.editStateValue + "?",
+          "确认信息",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+            center: false
+          }
+        )
+          .then(() => {
+            this.basicInfo.state = this.editStateValue;
+            console.log(this.basicInfo.state);
+            this.editState = false;
+            axios
+              .put(
+                "/api/state",
+                qs.stringify({
+                  projectId: this.projectBasicId,
+                  state: this.editStateValue
+                })
+              )
+              .then(response => {
+                if (response.data.code === 0) {
+                  this.$message.success("已修改状态为" + this.basicInfo.state);
+                }
+              });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "取消修改"
+            });
+          });
+      }
     },
     downloadExcel() {
       axios

@@ -11,9 +11,10 @@
           </el-button>
         </el-col>
       </el-row>
-      <!-- 工时列表区域 -->
+      <!-- 评审列表区域 -->
       <el-table
-        :data="reviewList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="reviewListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        @filter-change="reviewListFilter"
         border
         stripe
       >
@@ -22,8 +23,8 @@
           label="类型"
           width="80"
           :filters="[{ text: '评审类', value: 'review' }, { text: '缺陷类', value: 'defect' }]"
-          :filter-method="filterTypeOrState"
           filter-placement="bottom-end"
+          :column-key="'type'"
         >
           >
           <template slot-scope="scope">
@@ -41,7 +42,8 @@
               clearable
               @change="getBySearchProvider()"
               @clear="getReviewList()"
-              @blur="searchProvider=''"
+              @blur="providerBlur(searchProvider)"
+              @focus="getReviewList()"
             ></el-input>
           </template>
           <template slot-scope="scope">{{ scope.row.providerId }}</template>
@@ -52,8 +54,8 @@
           label="状态"
           width="100"
           :filters="[{ text: '已处理', value: 1 }, { text: '待处理', value: 0 }]"
-          :filter-method="filterTypeOrState"
           filter-placement="bottom-end"
+          :column-key="'state'"
         >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.state === 1" type="success">已处理</el-tag>
@@ -70,7 +72,8 @@
               clearable
               @change="getBySearchSolver()"
               @clear="getReviewList()"
-              @blur="searchSolver=''"
+              @blur="solverBlur(searchSolver)"
+              @focus="getReviewList()"
             ></el-input>
           </template>
           <template slot-scope="scope">
@@ -232,6 +235,7 @@ export default {
   data() {
     return {
       reviewList: [],
+      reviewListCopy: [],
       currentPage: 1,
       pageSize: 8,
       total: 0,
@@ -271,7 +275,8 @@ export default {
         link: ""
       },
       processVisible: false,
-      processFormRules: {}
+      processFormRules: {},
+      filtersArray: []
     };
   },
   created() {
@@ -290,6 +295,7 @@ export default {
             console.log(response.data.data);
             this.reviewList = response.data.data;
             this.total = this.reviewList.length;
+            this.reviewListCopy = this.reviewList;
           } else {
             this.$message.error("获取评审缺陷列表失败！");
           }
@@ -303,13 +309,30 @@ export default {
             if (response.data.code === 0) {
               console.log("ByProvider");
               console.log(response.data.data);
-              this.reviewList = response.data.data;
-              this.total = this.reviewList.length;
+              this.reviewListCopy = response.data.data;
+              this.reviewListCopy.forEach(item => {
+                if (item.projectId != this.projectBasicId) {
+                  this.reviewListCopy.splice(
+                    this.reviewListCopy.indexOf(item),
+                    1
+                  );
+                }
+              });
+
+              this.total = this.reviewListCopy.length;
             } else {
               this.$message.error("获取评审缺陷列表失败！");
             }
           });
       }
+    },
+    providerBlur(searchProvider) {
+      searchProvider = '';
+      this.getReviewList();
+    },
+    solverBlur(searchSolver) {
+      searchSolver = '';
+      this.getReviewList();
     },
     getBySearchSolver() {
       if (this.searchSolver !== "") {
@@ -319,8 +342,16 @@ export default {
             if (response.data.code === 0) {
               console.log("BySolver");
               console.log(response.data.data);
-              this.reviewList = response.data.data;
-              this.total = this.reviewList.length;
+              this.reviewListCopy = response.data.data;
+              this.reviewListCopy.forEach(item => {
+                if (item.projectId != this.projectBasicId) {
+                  this.reviewListCopy.splice(
+                    this.reviewListCopy.indexOf(item),
+                    1
+                  );
+                }
+              });
+              this.total = this.reviewListCopy.length;
             } else {
               this.$message.error("获取评审缺陷列表失败！");
             }
@@ -375,9 +406,35 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
     },
-    filterTypeOrState(value, row, column) {
-      const property = column["property"];
-      return row[property] === value;
+    // filterTypeOrState(value, row, column) {
+    //   const property = column["property"];
+    //   return row[property] === value;
+    // },
+    reviewListFilter(filters) {
+      console.log(filters);
+      //this.filtersArray.push(filters);
+      if (filters.state) {
+        if (filters.state.length == 0) {
+          this.reviewListCopy = this.reviewList;
+          this.total = this.reviewListCopy.length;
+        } else {
+          this.reviewListCopy = this.reviewListCopy.filter(
+            item => filters.state.indexOf(item.state) != -1
+          );
+          this.total = this.reviewListCopy.length;
+        }
+      }
+      if (filters.type) {
+        if (filters.type.length == 0) {
+          this.reviewListCopy = this.reviewList;
+          this.total = this.reviewListCopy.length;
+        } else {
+          this.reviewListCopy = this.reviewListCopy.filter(
+            item => filters.type.indexOf(item.type) != -1
+          );
+          this.type = this.reviewListCopy.length;
+        }
+      }
     },
     reportDialogClosed() {
       this.$refs.reportFormRef.resetFields();

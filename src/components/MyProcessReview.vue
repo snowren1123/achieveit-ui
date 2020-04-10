@@ -3,15 +3,13 @@
     <el-card shadow="always">
       <el-row type="flex" justify="space-between" align="middle">
         <el-col :span="8">
-          <div style="font-size:18px">评审/缺陷信息表</div>
-        </el-col>
-        <el-col :span="3">
-          <el-button type="primary" @click="getBySearchSolver()">占位</el-button>
+          <div style="font-size:18px">我的评审/缺陷处理</div>
         </el-col>
       </el-row>
       <!-- 工时列表区域 -->
       <el-table
-        :data="reviewList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="reviewListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        @filter-change="reviewListFilter"
         border
         stripe
       >
@@ -21,7 +19,7 @@
           label="类型"
           width="80"
           :filters="[{ text: '评审类', value: 'review' }, { text: '缺陷类', value: 'defect' }]"
-          :filter-method="filterTypeOrState"
+          :column-key="'type'"
           filter-placement="bottom-end"
         >
           >
@@ -74,6 +72,7 @@ export default {
   data() {
     return {
       reviewList: [],
+      reviewListCopy: [],
       currentPage: 1,
       pageSize: 8,
       total: 0
@@ -100,6 +99,21 @@ export default {
               this.$message.error("获取评审缺陷列表失败！");
             }
           });
+      }
+    },
+    reviewListFilter(filters) {
+      console.log(filters);
+      //this.filtersArray.push(filters);
+      if (filters.type) {
+        if (filters.type.length == 0) {
+          this.reviewListCopy = this.reviewList;
+          this.total = this.reviewListCopy.length;
+        } else {
+          this.reviewListCopy = this.reviewListCopy.filter(
+            item => filters.type.indexOf(item.type) != -1
+          );
+          this.type = this.reviewListCopy.length;
+        }
       }
     },
     handleSizeChange(val) {
