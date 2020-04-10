@@ -85,7 +85,8 @@ export default {
       timesheetListCopy: [],
       currentPage: 1,
       pageSize: 6,
-      total: 0
+      total: 0,
+      col: {}
     };
   },
   created() {
@@ -112,6 +113,7 @@ export default {
           this.timesheetList = response.data.data;
           this.timesheetListCopy = this.timesheetList;
           this.total = this.timesheetListCopy.length;
+          this.sortTimesheetList(this.col);
         } else {
           this.$message.error("获取待审核工时列表失败！");
         }
@@ -183,9 +185,9 @@ export default {
     },
     // 表格排序功能
     sortTimesheetList(column) {
-      console.log(column);
-      this.timesheetListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.timesheetListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.timesheetListCopy.reverse();
       }
     }

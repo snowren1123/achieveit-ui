@@ -92,7 +92,8 @@ export default {
       myDeviceListCopy: [],
       currentPage1: 1,
       pageSize1: 6,
-      total1: 0
+      total1: 0,
+      col: {}
     };
   },
   created() {
@@ -113,12 +114,12 @@ export default {
     // 表格数据方法
     getMyDeviceList() {
       axios.get("/api/device/owner/" + this.personId).then(response => {
-        console.log(this.personId);
         console.log(response.data);
         if (response.data.code === 0) {
           this.myDeviceList = response.data.data;
           this.myDeviceListCopy = this.myDeviceList;
           this.total1 = this.myDeviceListCopy.length;
+          this.sortMyDevice(this.col);
         } else {
           this.$message.error("获取我的设备列表失败！");
         }
@@ -153,9 +154,9 @@ export default {
 
     // 设备排序
     sortMyDevice(column) {
-      console.log(column);
-      this.myDeviceListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.myDeviceListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.myDeviceListCopy.reverse();
       }
     }

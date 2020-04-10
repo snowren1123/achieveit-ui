@@ -58,7 +58,8 @@ export default {
       riskOwnListCopy: [],
       currentPage: 1,
       pageSize: 6,
-      total: 0
+      total: 0,
+      col: {}
     };
   },
   created() {
@@ -75,6 +76,7 @@ export default {
           this.riskOwnList = response.data.data;
           this.riskOwnListCopy = this.riskOwnList;
           this.total = this.riskOwnListCopy.length;
+          this.sortRiskOwn(this.col);
         } else {
           this.$message.error("获取责任风险列表失败！");
         }
@@ -88,9 +90,9 @@ export default {
     },
     // 责任风险排序
     sortRiskOwn(column) {
-      console.log(column);
-      this.riskOwnListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.riskOwnListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.riskOwnListCopy.reverse();
       }
     }

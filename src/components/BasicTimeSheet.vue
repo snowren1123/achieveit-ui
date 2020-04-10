@@ -193,6 +193,7 @@ export default {
       currentPage: 1,
       pageSize: 6,
       total: 0,
+      col: {},
 
       // 新增工时的数据
       addFormTitle: "新增工时信息",
@@ -238,7 +239,8 @@ export default {
         startTime: "",
         endTime: "",
         state: ""
-      }
+      },
+      myFilters: []
     };
   },
   created() {
@@ -265,6 +267,7 @@ export default {
           this.timesheetList = response.data.data;
           this.timesheetListCopy = this.timesheetList;
           this.total = this.timesheetListCopy.length;
+          this.filterTimesheetList(this.col);
         } else {
           this.$message.error("获取工时列表失败！");
         }
@@ -465,26 +468,26 @@ export default {
 
     // 表格筛选功能
     filterTimesheetList(filters) {
-      if (filters.state) {
-        console.log(filters.state);
-        if (filters.state.length == 0) {
+      this.myFilters = filters;
+      if (this.myFilters.state) {
+        if (this.myFilters.state.length == 0) {
           this.timesheetListCopy = this.timesheetList;
           this.total = this.timesheetListCopy.length;
         } else {
           this.timesheetListCopy = this.timesheetList.filter(
-            item => filters.state.indexOf(item.state) != -1
+            item => this.myFilters.state.indexOf(item.state) != -1
           );
           this.total = this.timesheetListCopy.length;
         }
-        console.log(this.timesheetListCopy);
       }
+      this.sortTimesheetList(this.col);
     },
 
     // 表格排序功能
     sortTimesheetList(column) {
-      console.log(column);
-      this.timesheetListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.timesheetListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.timesheetListCopy.reverse();
       }
     }

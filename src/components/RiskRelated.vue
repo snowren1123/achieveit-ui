@@ -59,7 +59,8 @@ export default {
       riskRelatedListCopy: [],
       currentPage: 1,
       pageSize: 6,
-      total: 0
+      total: 0,
+      col: {}
     };
   },
   created() {
@@ -76,6 +77,7 @@ export default {
           this.riskRelatedList = response.data.data;
           this.riskRelatedListCopy = this.riskRelatedList;
           this.total = this.riskRelatedListCopy.length;
+          this.sortRiskRelated(this.col);
         } else {
           this.$message.error("获取相关风险列表失败！");
         }
@@ -89,9 +91,9 @@ export default {
     },
     // 相关风险排序
     sortRiskRelated(column) {
-      console.log(column);
-      this.riskRelatedListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.riskRelatedListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.riskRelatedListCopy.reverse();
       }
     }

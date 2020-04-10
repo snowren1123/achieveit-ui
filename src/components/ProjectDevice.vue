@@ -200,12 +200,14 @@ export default {
       currentPage: 1,
       pageSize: 6,
       total: 0,
+      col: {},
 
       myDeviceList: [],
       myDeviceListCopy: [],
       currentPage1: 1,
       pageSize1: 6,
       total1: 0,
+      col1: {},
 
       // 分配设备数据
       addDialogFormRules: {
@@ -259,6 +261,7 @@ export default {
           this.deviceList = response.data.data;
           this.deviceListCopy = this.deviceList;
           this.total = this.deviceListCopy.length;
+          this.sortDevice(this.col);
         } else {
           this.$message.error("获取项目设备列表失败！");
         }
@@ -275,6 +278,7 @@ export default {
           );
           this.myDeviceListCopy = this.myDeviceList;
           this.total1 = this.myDeviceListCopy.length;
+          this.sortMyDevice(this.col1);
         } else {
           this.$message.error("获取我的设备列表失败！");
         }
@@ -356,16 +360,16 @@ export default {
 
     // 设备排序
     sortDevice(column) {
-      console.log(column);
-      this.deviceListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col = column;
+      this.deviceListCopy.sort(this.$compare(this.col["prop"]));
+      if (this.col["order"] == "descending") {
         this.deviceListCopy.reverse();
       }
     },
     sortMyDevice(column) {
-      console.log(column);
-      this.myDeviceListCopy.sort(this.$compare(column["prop"]));
-      if (column["order"] == "descending") {
+      this.col1 = column;
+      this.myDeviceListCopy.sort(this.$compare(this.col1["prop"]));
+      if (this.col1["order"] == "descending") {
         this.myDeviceListCopy.reverse();
       }
     }
