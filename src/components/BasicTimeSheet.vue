@@ -17,7 +17,6 @@
         :data="timesheetListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @filter-change="filterTimesheetList"
         @sort-change="sortTimesheetList"
-        border
         stripe
       >
         <el-table-column prop="projectId" label="项目ID" width="140" sortable="custom"></el-table-column>
@@ -82,6 +81,16 @@
                 @click="submitTimeSheet(scope.row)"
               ></el-button>
             </el-tooltip>
+          </template>
+        </el-table-column>
+        <el-table-column width="40">
+          <template slot-scope="scope">
+            <i
+              v-if="scope.row.state == '草稿'"
+              class="el-icon-delete"
+              style="color:#F56C6C"
+              @click="deleteTimeSheet(scope.row)"
+            ></i>
           </template>
         </el-table-column>
       </el-table>
@@ -472,13 +481,14 @@ export default {
       if (this.myFilters.state) {
         if (this.myFilters.state.length == 0) {
           this.timesheetListCopy = this.timesheetList;
-          this.total = this.timesheetListCopy.length;
         } else {
           this.timesheetListCopy = this.timesheetList.filter(
             item => this.myFilters.state.indexOf(item.state) != -1
           );
-          this.total = this.timesheetListCopy.length;
         }
+        this.total = this.timesheetListCopy.length;
+        this.pageSize = 6;
+        this.currentPage = 1;
       }
       this.sortTimesheetList(this.col);
     },
@@ -490,6 +500,35 @@ export default {
       if (this.col["order"] == "descending") {
         this.timesheetListCopy.reverse();
       }
+    },
+
+    // 删除工时的操作
+    async deleteTimeSheet(row) {
+      const confirmResult = await this.$confirm(
+        "此操作将删除该工时记录，是否继续？",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).catch(err => err);
+
+      if (confirmResult !== "confirm") {
+        return this.$message.info("已取消删除！");
+      }
+
+      axios
+        .delete("/api/timesheet?timesheetId=" + row.timesheetId)
+        .then(response => {
+          console.log(response);
+          if (response.data.code === 0) {
+            this.getTimeSheetList();
+            this.$message.success("删除成功！");
+          } else {
+            this.$message.error("删除失败！");
+          }
+        });
     }
   }
 };

@@ -6,7 +6,7 @@
           <div style="font-size:18px">我的评审/缺陷报告</div>
         </el-col>
       </el-row>
-      <!-- 工时列表区域 -->
+      <!-- 评审缺陷列表区域 -->
       <el-table
         :data="reviewListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @filter-change="reviewListFilter"

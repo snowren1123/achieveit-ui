@@ -445,11 +445,14 @@ export default {
 
     submitOutputLink(outputLink) {
       axios
-        .put("/api/projectinfo/outputlink", {
-          projectId: this.projectBasicId,
-          outputLink: outputLink
-        })
+        .put(
+          "/api/projectinfo/outputlink?projectId=" +
+            this.projectBasicId +
+            "&outputLink=" +
+            outputLink
+        )
         .then(response => {
+          console.log(response);
           if (response.data.code === 0) {
             this.$message.success("添加归档链接成功！");
           } else {
