@@ -335,8 +335,4 @@ p {
   font-size: 13px;
   line-height: 1.7;
 }
-
-.el-card {
-  padding-top: 10px;
-}
 </style>

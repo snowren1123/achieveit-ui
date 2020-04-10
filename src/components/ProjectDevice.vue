@@ -7,14 +7,14 @@
           <i class="el-icon-s-platform"></i> 项目设备
         </span>
         <el-table
-          :data="deviceList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-          :default-sort="{prop: 'deviceId'}"
+          :data="deviceListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          @sort-change="sortDevice"
           border
           stripe
         >
-          <el-table-column prop="deviceId" label="设备ID" sortable></el-table-column>
+          <el-table-column prop="deviceId" label="设备ID" sortable="custom"></el-table-column>
           <el-table-column prop="type" label="类型"></el-table-column>
-          <el-table-column prop="checkinDate" label="分配日期" sortable>
+          <el-table-column prop="checkinDate" label="分配日期" sortable="custom">
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="returnDate" label="归还日期">
@@ -23,10 +23,10 @@
               <span v-else>暂未归还</span>
             </template>
           </el-table-column>
-          <el-table-column prop="totalUseTime" label="使用期限" sortable>
+          <el-table-column prop="totalUseTime" label="使用期限" sortable="custom">
             <template slot-scope="scope">{{scope.row.totalUseTime}}个月</template>
           </el-table-column>
-          <el-table-column prop="lastVerifyDate" label="上次核对" sortable>
+          <el-table-column prop="lastVerifyDate" label="上次核对" sortable="custom">
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="deviceManagerId" label="使用者ID"></el-table-column>
@@ -49,14 +49,14 @@
           <i class="el-icon-mobile-phone"></i> 我的项目设备
         </span>
         <el-table
-          :data="myDeviceList.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
-          :default-sort="{prop: 'deviceId'}"
+          :data="myDeviceListCopy.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+          @sort-change="sortMyDevice"
           border
           stripe
         >
-          <el-table-column prop="deviceId" label="设备ID" sortable></el-table-column>
+          <el-table-column prop="deviceId" label="设备ID" sortable="custom"></el-table-column>
           <el-table-column prop="type" label="类型"></el-table-column>
-          <el-table-column prop="checkinDate" label="分配日期" sortable>
+          <el-table-column prop="checkinDate" label="分配日期" sortable="custom">
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column prop="returnDate" label="归还日期">
@@ -65,10 +65,10 @@
               <span v-else>暂未归还</span>
             </template>
           </el-table-column>
-          <el-table-column prop="totalUseTime" label="使用期限" sortable>
+          <el-table-column prop="totalUseTime" label="使用期限" sortable="custom">
             <template slot-scope="scope">{{scope.row.totalUseTime}}个月</template>
           </el-table-column>
-          <el-table-column prop="lastVerifyDate" label="上次核对" sortable>
+          <el-table-column prop="lastVerifyDate" label="上次核对" sortable="custom">
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
           <el-table-column label="操作" width="130">
@@ -196,11 +196,13 @@ export default {
     return {
       // 分页数据
       deviceList: [],
+      deviceListCopy: [],
       currentPage: 1,
       pageSize: 6,
       total: 0,
 
       myDeviceList: [],
+      myDeviceListCopy: [],
       currentPage1: 1,
       pageSize1: 6,
       total1: 0,
@@ -255,7 +257,8 @@ export default {
         console.log(response.data);
         if (response.data.code === 0) {
           this.deviceList = response.data.data;
-          this.total = this.deviceList.length;
+          this.deviceListCopy = this.deviceList;
+          this.total = this.deviceListCopy.length;
         } else {
           this.$message.error("获取项目设备列表失败！");
         }
@@ -270,7 +273,8 @@ export default {
           this.myDeviceList = this.myDeviceList.filter(
             item => item.projectId == this.projectBasicId
           );
-          this.total1 = this.myDeviceList.length;
+          this.myDeviceListCopy = this.myDeviceList;
+          this.total1 = this.myDeviceListCopy.length;
         } else {
           this.$message.error("获取我的设备列表失败！");
         }
@@ -348,6 +352,22 @@ export default {
           this.$message.error("归还设备失败");
         }
       });
+    },
+
+    // 设备排序
+    sortDevice(column) {
+      console.log(column);
+      this.deviceListCopy.sort(this.$compare(column["prop"]));
+      if (column["order"] == "descending") {
+        this.deviceListCopy.reverse();
+      }
+    },
+    sortMyDevice(column) {
+      console.log(column);
+      this.myDeviceListCopy.sort(this.$compare(column["prop"]));
+      if (column["order"] == "descending") {
+        this.myDeviceListCopy.reverse();
+      }
     }
   }
 };

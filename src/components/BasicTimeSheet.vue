@@ -14,12 +14,13 @@
       </el-row>
       <!-- 工时列表区域 -->
       <el-table
-        :data="timesheetList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        :default-sort="{prop: 'projectId', order: 'descending'}"
+        :data="timesheetListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        @filter-change="filterTimesheetList"
+        @sort-change="sortTimesheetList"
         border
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140" sortable></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" width="140" sortable="custom"></el-table-column>
         <el-table-column label="功能模块">
           <template
             slot-scope="scope"
@@ -30,13 +31,20 @@
             slot-scope="scope"
           >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
         </el-table-column>
-        <el-table-column prop="date" label="日期" width="120" sortable></el-table-column>
+        <el-table-column prop="date" label="日期" width="120" sortable="custom"></el-table-column>
         <el-table-column label="时间" width="140">
           <template
             slot-scope="scope"
           >{{scope.row.startTime.slice(0,5)}} 至 {{scope.row.endTime.slice(0,5)}}</template>
         </el-table-column>
-        <el-table-column prop="state" label="状态" width="80">
+        <el-table-column
+          prop="state"
+          label="状态"
+          width="80"
+          :filters="[{ text: '草稿', value: '草稿' }, { text: '已提交', value: '已提交' },{ text: '已确认', value: '已确认' },{ text: '打回', value: '打回' }]"
+          :column-key="'state'"
+          filter-placement="bottom-end"
+        >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.state == '草稿'" type="warning">{{scope.row.state}}</el-tag>
             <el-tag v-if="scope.row.state == '已提交'">{{scope.row.state}}</el-tag>
@@ -181,6 +189,7 @@ export default {
   data() {
     return {
       timesheetList: [],
+      timesheetListCopy: [],
       currentPage: 1,
       pageSize: 6,
       total: 0,
@@ -254,7 +263,8 @@ export default {
         console.log(response.data);
         if (response.data.code === 0) {
           this.timesheetList = response.data.data;
-          this.total = this.timesheetList.length;
+          this.timesheetListCopy = this.timesheetList;
+          this.total = this.timesheetListCopy.length;
         } else {
           this.$message.error("获取工时列表失败！");
         }
@@ -451,6 +461,32 @@ export default {
           this.$message.error(response.data.data);
         }
       });
+    },
+
+    // 表格筛选功能
+    filterTimesheetList(filters) {
+      if (filters.state) {
+        console.log(filters.state);
+        if (filters.state.length == 0) {
+          this.timesheetListCopy = this.timesheetList;
+          this.total = this.timesheetListCopy.length;
+        } else {
+          this.timesheetListCopy = this.timesheetList.filter(
+            item => filters.state.indexOf(item.state) != -1
+          );
+          this.total = this.timesheetListCopy.length;
+        }
+        console.log(this.timesheetListCopy);
+      }
+    },
+
+    // 表格排序功能
+    sortTimesheetList(column) {
+      console.log(column);
+      this.timesheetListCopy.sort(this.$compare(column["prop"]));
+      if (column["order"] == "descending") {
+        this.timesheetListCopy.reverse();
+      }
     }
   }
 };
@@ -484,9 +520,5 @@ export default {
 p {
   font-size: 13px;
   line-height: 1.7;
-}
-
-.el-card {
-  padding-top: 10px;
 }
 </style>

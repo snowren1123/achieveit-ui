@@ -9,12 +9,13 @@
       </el-row>
       <!-- 工时列表区域 -->
       <el-table
-        :data="timesheetList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        :default-sort="{prop: 'projectId', order: 'descending'}"
+        :data="timesheetListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        @sort-change="sortTimesheetList"
         border
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140" sortable></el-table-column>
+        <el-table-column prop="employeeId" label="员工ID" width="90" sortable="custom"></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" width="140" sortable="custom"></el-table-column>
         <el-table-column label="功能模块">
           <template
             slot-scope="scope"
@@ -25,7 +26,7 @@
             slot-scope="scope"
           >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
         </el-table-column>
-        <el-table-column prop="date" label="日期" width="120" sortable></el-table-column>
+        <el-table-column prop="date" label="日期" width="120" sortable="custom"></el-table-column>
         <el-table-column label="时间" width="140">
           <template
             slot-scope="scope"
@@ -81,6 +82,7 @@ export default {
   data() {
     return {
       timesheetList: [],
+      timesheetListCopy: [],
       currentPage: 1,
       pageSize: 6,
       total: 0
@@ -108,7 +110,8 @@ export default {
         console.log(response.data);
         if (response.data.code === 0) {
           this.timesheetList = response.data.data;
-          this.total = this.timesheetList.length;
+          this.timesheetListCopy = this.timesheetList;
+          this.total = this.timesheetListCopy.length;
         } else {
           this.$message.error("获取待审核工时列表失败！");
         }
@@ -177,6 +180,14 @@ export default {
             this.$message.error(response.data.data);
           }
         });
+    },
+    // 表格排序功能
+    sortTimesheetList(column) {
+      console.log(column);
+      this.timesheetListCopy.sort(this.$compare(column["prop"]));
+      if (column["order"] == "descending") {
+        this.timesheetListCopy.reverse();
+      }
     }
   }
 };

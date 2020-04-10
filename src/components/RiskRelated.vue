@@ -4,8 +4,8 @@
     <!-- 相关风险列表 -->
     <el-card shadow="always">
       <el-table
-        :data="riskRelatedList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        :default-sort="{prop: 'riskId'}"
+        :data="riskRelatedListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        @sort-change="sortRiskRelated"
         border
         stripe
       >
@@ -24,11 +24,11 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="风险ID" prop="riskId" sortable></el-table-column>
+        <el-table-column label="风险ID" prop="riskId" sortable="custom"></el-table-column>
         <el-table-column label="风险类型" prop="type"></el-table-column>
-        <el-table-column label="风险等级" prop="riskLevel" sortable></el-table-column>
+        <el-table-column label="风险等级" prop="riskLevel" sortable="custom"></el-table-column>
         <el-table-column label="风险状态" prop="riskState"></el-table-column>
-        <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable></el-table-column>
+        <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable="custom"></el-table-column>
         <el-table-column label="所属项目" prop="projectId"></el-table-column>
         <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
       </el-table>
@@ -56,6 +56,7 @@ export default {
   data() {
     return {
       riskRelatedList: [],
+      riskRelatedListCopy: [],
       currentPage: 1,
       pageSize: 6,
       total: 0
@@ -73,7 +74,8 @@ export default {
         console.log(response.data);
         if (response.data.code === 0) {
           this.riskRelatedList = response.data.data;
-          this.total = this.riskRelatedList.length;
+          this.riskRelatedListCopy = this.riskRelatedList;
+          this.total = this.riskRelatedListCopy.length;
         } else {
           this.$message.error("获取相关风险列表失败！");
         }
@@ -84,6 +86,14 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
+    },
+    // 相关风险排序
+    sortRiskRelated(column) {
+      console.log(column);
+      this.riskRelatedListCopy.sort(this.$compare(column["prop"]));
+      if (column["order"] == "descending") {
+        this.riskRelatedListCopy.reverse();
+      }
     }
   }
 };
