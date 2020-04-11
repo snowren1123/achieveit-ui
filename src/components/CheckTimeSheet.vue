@@ -11,7 +11,6 @@
       <el-table
         :data="timesheetListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @sort-change="sortTimesheetList"
-        border
         stripe
       >
         <el-table-column prop="employeeId" label="员工ID" width="90" sortable="custom"></el-table-column>
@@ -37,13 +36,15 @@
             <el-tag v-if="scope.row.state == '已提交'">{{scope.row.state}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="130">
+        <el-table-column label="操作" width="95">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="通过" placement="top">
               <el-button
                 type="success"
                 icon="el-icon-check"
                 size="mini"
+                circle
+                plain
                 @click="checkTimeSheet(scope.row)"
               ></el-button>
             </el-tooltip>
@@ -52,6 +53,8 @@
                 type="danger"
                 icon="el-icon-close"
                 size="mini"
+                circle
+                plain
                 @click="rejectTimeSheet(scope.row)"
               ></el-button>
             </el-tooltip>

@@ -33,7 +33,7 @@
           </template>
         </el-table-column>
         <el-table-column width="150">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-input
               class="search-set"
               v-model="searchProvider"
@@ -63,7 +63,7 @@
           </template>
         </el-table-column>
         <el-table-column width="155">
-          <template slot="header" slot-scope="scope">
+          <template slot="header">
             <el-input
               class="search-set"
               v-model="searchSolver"
@@ -237,7 +237,7 @@ export default {
       reviewList: [],
       reviewListCopy: [],
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 6,
       total: 0,
       searchProvider: "",
       searchSolver: "",
@@ -276,7 +276,7 @@ export default {
       },
       processVisible: false,
       processFormRules: {},
-      filtersArray: []
+      myFilters: { state: [], type: [] }
     };
   },
   created() {
@@ -327,11 +327,11 @@ export default {
       }
     },
     providerBlur(searchProvider) {
-      searchProvider = '';
+      searchProvider = "";
       this.getReviewList();
     },
     solverBlur(searchSolver) {
-      searchSolver = '';
+      searchSolver = "";
       this.getReviewList();
     },
     getBySearchSolver() {
@@ -412,29 +412,30 @@ export default {
     // },
     reviewListFilter(filters) {
       console.log(filters);
-      //this.filtersArray.push(filters);
       if (filters.state) {
-        if (filters.state.length == 0) {
-          this.reviewListCopy = this.reviewList;
-          this.total = this.reviewListCopy.length;
-        } else {
-          this.reviewListCopy = this.reviewListCopy.filter(
-            item => filters.state.indexOf(item.state) != -1
-          );
-          this.total = this.reviewListCopy.length;
-        }
+        this.myFilters.state = filters.state;
       }
       if (filters.type) {
-        if (filters.type.length == 0) {
-          this.reviewListCopy = this.reviewList;
-          this.total = this.reviewListCopy.length;
-        } else {
-          this.reviewListCopy = this.reviewListCopy.filter(
-            item => filters.type.indexOf(item.type) != -1
-          );
-          this.type = this.reviewListCopy.length;
-        }
+        this.myFilters.type = filters.type;
       }
+
+      if (this.myFilters.state.length == 0) {
+        this.reviewListCopy = this.reviewList;
+      } else {
+        this.reviewListCopy = this.reviewList.filter(
+          item => this.myFilters.state.indexOf(item.state) != -1
+        );
+      }
+
+      if (this.myFilters.type.length != 0) {
+        this.reviewListCopy = this.reviewListCopy.filter(
+          item => this.myFilters.type.indexOf(item.type) != -1
+        );
+      }
+
+      this.total = this.reviewListCopy.length;
+      this.currentPage = 1;
+      this.pageSize = 6;
     },
     reportDialogClosed() {
       this.$refs.reportFormRef.resetFields();

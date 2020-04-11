@@ -71,7 +71,7 @@
           <el-table-column prop="lastVerifyDate" label="上次核对" sortable="custom">
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column label="操作" width="130">
+          <el-table-column label="操作" width="95">
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
@@ -84,6 +84,8 @@
                   type="success"
                   icon="el-icon-edit"
                   size="mini"
+                  circle
+                  plain
                   @click="checkDevice(scope.row)"
                 ></el-button>
               </el-tooltip>
@@ -98,6 +100,8 @@
                   type="danger"
                   icon="el-icon-check"
                   size="mini"
+                  circle
+                  plain
                   @click="returnDevice(scope.row)"
                 ></el-button>
               </el-tooltip>

@@ -81,55 +81,57 @@ export default {
       reviewListCopy: [],
       currentPage: 1,
       pageSize: 8,
-      total: 0
+      total: 0,
+      myFilters: { state: [], type: [] }
     };
   },
   created() {
-    this.getBySearchProvider()
+    this.getBySearchProvider();
   },
   computed: {
     ...mapState(["personId"])
   },
   methods: {
     getBySearchProvider() {
-        axios
-          .get("/api/review_defect/provider/" + this.personId)
-          .then(response => {
-            if (response.data.code === 0) {
-              console.log("ByProvider");
-              console.log(response.data.data);
-              this.reviewList = response.data.data;
-              this.total = this.reviewList.length;
-            } else {
-              this.$message.error("获取评审缺陷列表失败！");
-            }
-          });
+      axios
+        .get("/api/review_defect/provider/" + this.personId)
+        .then(response => {
+          if (response.data.code === 0) {
+            console.log("ByProvider");
+            console.log(response.data.data);
+            this.reviewList = response.data.data;
+            this.total = this.reviewList.length;
+          } else {
+            this.$message.error("获取评审缺陷列表失败！");
+          }
+        });
     },
     reviewListFilter(filters) {
       console.log(filters);
-      //this.filtersArray.push(filters);
       if (filters.state) {
-        if (filters.state.length == 0) {
-          this.reviewListCopy = this.reviewList;
-          this.total = this.reviewListCopy.length;
-        } else {
-          this.reviewListCopy = this.reviewListCopy.filter(
-            item => filters.state.indexOf(item.state) != -1
-          );
-          this.total = this.reviewListCopy.length;
-        }
+        this.myFilters.state = filters.state;
       }
       if (filters.type) {
-        if (filters.type.length == 0) {
-          this.reviewListCopy = this.reviewList;
-          this.total = this.reviewListCopy.length;
-        } else {
-          this.reviewListCopy = this.reviewListCopy.filter(
-            item => filters.type.indexOf(item.type) != -1
-          );
-          this.type = this.reviewListCopy.length;
-        }
+        this.myFilters.type = filters.type;
       }
+
+      if (this.myFilters.state.length == 0) {
+        this.reviewListCopy = this.reviewList;
+      } else {
+        this.reviewListCopy = this.reviewList.filter(
+          item => this.myFilters.state.indexOf(item.state) != -1
+        );
+      }
+
+      if (this.myFilters.type.length != 0) {
+        this.reviewListCopy = this.reviewListCopy.filter(
+          item => this.myFilters.type.indexOf(item.type) != -1
+        );
+      }
+
+      this.total = this.reviewListCopy.length;
+      this.currentPage = 1;
+      this.pageSize = 6;
     },
     handleSizeChange(val) {
       this.pageSize = val;

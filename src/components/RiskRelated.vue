@@ -6,7 +6,6 @@
       <el-table
         :data="riskRelatedListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @sort-change="sortRiskRelated"
-        border
         stripe
       >
         <el-table-column type="expand">
@@ -38,7 +37,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[6, 10, 15, 20]"
+        :page-sizes="[8, 10, 15, 20]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -58,7 +57,7 @@ export default {
       riskRelatedList: [],
       riskRelatedListCopy: [],
       currentPage: 1,
-      pageSize: 6,
+      pageSize: 8,
       total: 0,
       col: {}
     };

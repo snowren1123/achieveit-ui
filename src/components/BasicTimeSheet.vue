@@ -51,7 +51,7 @@
             <el-tag v-if="scope.row.state == '打回'" type="danger">{{scope.row.state}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="130">
+        <el-table-column label="操作" width="135">
           <template slot-scope="scope">
             <el-tooltip
               class="item"
@@ -64,6 +64,8 @@
                 type="success"
                 icon="el-icon-edit"
                 size="mini"
+                circle
+                plain
                 @click="editTimeSheet(scope.row)"
               ></el-button>
             </el-tooltip>
@@ -78,19 +80,27 @@
                 type="danger"
                 icon="el-icon-check"
                 size="mini"
+                circle
+                plain
                 @click="submitTimeSheet(scope.row)"
               ></el-button>
             </el-tooltip>
-          </template>
-        </el-table-column>
-        <el-table-column width="40">
-          <template slot-scope="scope">
-            <i
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="提交"
+              placement="top"
               v-if="scope.row.state == '草稿'"
-              class="el-icon-delete"
-              style="color:#F56C6C"
-              @click="deleteTimeSheet(scope.row)"
-            ></i>
+            >
+              <el-button
+                class="el-icon-delete"
+                type="danger"
+                size="mini"
+                circle
+                plain
+                @click="deleteTimeSheet(scope.row)"
+              ></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>

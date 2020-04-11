@@ -32,11 +32,7 @@
           <template slot-scope="scope">{{ scope.row.providerId }}</template>
         </el-table-column>
         <el-table-column prop="date" label="日期" width="190"></el-table-column>
-        <el-table-column
-          prop="state"
-          label="状态"
-          width="100"
-        >
+        <el-table-column prop="state" label="状态" width="100">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.state === 1" type="success">已处理</el-tag>
             <el-tag v-if="scope.row.state === 0" type="warning">待处理</el-tag>
@@ -74,7 +70,7 @@ export default {
       reviewList: [],
       reviewListCopy: [],
       currentPage: 1,
-      pageSize: 8,
+      pageSize: 6,
       total: 0
     };
   },
@@ -107,13 +103,14 @@ export default {
       if (filters.type) {
         if (filters.type.length == 0) {
           this.reviewListCopy = this.reviewList;
-          this.total = this.reviewListCopy.length;
         } else {
-          this.reviewListCopy = this.reviewListCopy.filter(
+          this.reviewListCopy = this.reviewList.filter(
             item => filters.type.indexOf(item.type) != -1
           );
-          this.type = this.reviewListCopy.length;
         }
+        this.total = this.reviewListCopy.length;
+        this.currentPage = 1;
+        this.pageSize = 6;
       }
     },
     handleSizeChange(val) {

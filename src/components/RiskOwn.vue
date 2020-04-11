@@ -6,15 +6,11 @@
       <el-table
         :data="riskOwnListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @sort-change="sortRiskOwn"
-        border
         stripe
       >
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="风险影响度">
-                <span>{{ props.row.influence }}</span>
-              </el-form-item>
               <el-form-item label="风险描述">
                 <span>{{ props.row.description }}</span>
               </el-form-item>
@@ -28,8 +24,9 @@
         <el-table-column label="风险类型" prop="type"></el-table-column>
         <el-table-column label="风险等级" prop="riskLevel" sortable="custom"></el-table-column>
         <el-table-column label="风险状态" prop="riskState"></el-table-column>
+        <el-table-column label="风险影响度" prop="influence"></el-table-column>
         <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable="custom"></el-table-column>
-        <el-table-column label="所属项目" prop="projectId"></el-table-column>
+        <el-table-column label="所属项目" prop="projectId" sortable="custom"></el-table-column>
       </el-table>
 
       <!-- 分页区域 -->
@@ -37,7 +34,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[6, 10, 15, 20]"
+        :page-sizes="[8, 10, 15, 20]"
         :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -57,7 +54,7 @@ export default {
       riskOwnList: [],
       riskOwnListCopy: [],
       currentPage: 1,
-      pageSize: 6,
+      pageSize: 8,
       total: 0,
       col: {}
     };
