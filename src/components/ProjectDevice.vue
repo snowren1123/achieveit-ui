@@ -137,7 +137,7 @@
         ></el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane label="分配设备">
+      <el-tab-pane v-if="roleInProject == '项目经理'" label="分配设备">
         <span slot="label">
           <i class="el-icon-circle-plus-outline"></i> 分配设备
         </span>
@@ -258,7 +258,8 @@ export default {
     this.getProjectMembers();
   },
   computed: {
-    ...mapState(["projectBasicId", "personId"])
+    ...mapState(["projectBasicId", "personId"]),
+    ...mapState(["roleInProject"])
   },
   methods: {
     // 分页方法
@@ -285,7 +286,7 @@ export default {
           this.total = this.deviceListCopy.length;
           this.filterDeviceList(this.myFilters);
         } else {
-          this.$message.error("获取项目设备列表失败！");
+          //this.$message.error("获取项目设备列表失败！");
         }
       });
     },

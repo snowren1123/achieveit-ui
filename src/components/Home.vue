@@ -58,10 +58,10 @@
             </template>
             <el-menu-item-group>
               <template slot="title">查看评缺</template>
-              <el-menu-item index="/home/myreportreview">
+              <el-menu-item v-show="personInfo.title == '测试'" index="/home/myreportreview">
                 <i class="el-icon-mic"></i>我的报告
               </el-menu-item>
-              <el-menu-item index="/home/myprocessreview">
+              <el-menu-item v-show="personInfo.title == '开发'" index="/home/myprocessreview">
                 <i class="el-icon-coordinate"></i>我的处理
               </el-menu-item>
             </el-menu-item-group>
@@ -144,6 +144,8 @@ export default {
       axios.get("/api/employee/" + this.personId).then(response => {
         if (response.data.code === 0) {
           this.personInfo = response.data.data;
+          console.log(this.personInfo);
+          this.$store.commit("setUserTitle", this.personInfo.title);
         } else {
           this.$message.error("获取用户信息失败！");
         }

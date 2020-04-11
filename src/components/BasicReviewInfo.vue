@@ -6,7 +6,7 @@
           <div style="font-size:18px">评审/缺陷信息表</div>
         </el-col>
         <el-col :span="2">
-          <el-button type="danger" size="medium" @click="reportVisible=true" plain round>
+          <el-button v-show="roleInProject.indexOf('测试') != -1" type="danger" size="medium" @click="reportVisible=true" plain round>
             <i class="el-icon-plus"></i>报告
           </el-button>
         </el-col>
@@ -79,7 +79,7 @@
           <template slot-scope="scope">
             <div v-if="scope.row.solverId == null">
               <el-tag type="info">暂无</el-tag>
-              <el-button type="primary" size="small" plain @click="processReport(scope.row)">点击处理</el-button>
+              <el-button v-show="roleInProject.indexOf('开发') != -1" type="primary" size="small" plain @click="processReport(scope.row)">点击处理</el-button>
             </div>
             <span v-else>{{ scope.row.solverId }}</span>
           </template>
@@ -284,7 +284,8 @@ export default {
   },
   computed: {
     ...mapState(["projectBasicId"]),
-    ...mapState(["personId"])
+    ...mapState(["personId"]),
+    ...mapState(["roleInProject"])
   },
   methods: {
     getReviewList() {

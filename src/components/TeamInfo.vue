@@ -7,6 +7,7 @@
             <div slot="header" class="clearfix">
               <span>{{ member.employeeName }}</span>
               <el-button
+                v-show="roleInProject == '项目经理'"
                 icon="el-icon-delete"
                 circle
                 style="float: right"
@@ -16,6 +17,7 @@
                 @click="deleteMember(member.employeeId)"
               ></el-button>
               <el-button
+                v-show="roleInProject == '项目经理'"
                 icon="el-icon-edit"
                 circle
                 style="float: right; margin-right: 6px"
@@ -48,7 +50,7 @@
       </template>
       <template>
         <el-col :span="8">
-          <el-card shadow="hover" class="add_card">
+          <el-card shadow="hover" class="add_card" v-show="roleInProject == '项目经理'">
             <i class="el-icon-plus add_icon" @click="addMemberDialogShow"></i>
           </el-card>
         </el-col>
@@ -232,7 +234,8 @@ export default {
   },
 
   computed: {
-    ...mapState(["projectBasicId"])
+    ...mapState(["projectBasicId"]),
+    ...mapState(["roleInProject"])
   },
 
   methods: {

@@ -26,7 +26,7 @@
           ></el-option>
         </el-select>
         <el-button
-          v-show="!editState"
+          v-show="(roleInProject == '项目经理') && !editState"
           size="mini"
           icon="el-icon-edit"
           @click="editState=!editState"
@@ -79,7 +79,7 @@
               <span>{{ node.label }}</span>
               <span style="margin-right: 15px;">
                 <el-button
-                  v-show="data.showAdd"
+                  v-show="(roleInProject == '项目经理') && data.showAdd"
                   class="mini-btn-set"
                   type="success"
                   icon="el-icon-plus"
@@ -89,6 +89,7 @@
                   plain
                 ></el-button>
                 <el-button
+                  v-show="roleInProject == '项目经理'"
                   class="mini-btn-set"
                   type="info"
                   icon="el-icon-edit"
@@ -98,6 +99,7 @@
                   plain
                 ></el-button>
                 <el-button
+                  v-show="roleInProject == '项目经理'"
                   class="mini-btn-set"
                   type="danger"
                   icon="el-icon-delete"
@@ -131,6 +133,7 @@
             </div>
           </el-dialog>
           <el-button
+            v-show="roleInProject == '项目经理'"
             class="mini-btn-set"
             type="success"
             icon="el-icon-circle-plus-outline"
@@ -157,7 +160,7 @@
             :show-file-list="isUpload"
           >
             <el-tooltip class="item" effect="dark" content="上传excel文件" placement="left">
-              <el-button type="primary" size="medium" icon="el-icon-document-add" circle plain></el-button>
+              <el-button v-show="roleInProject == '项目经理'" type="primary" size="medium" icon="el-icon-document-add" circle plain></el-button>
             </el-tooltip>
           </el-upload>
           <el-tooltip class="item" effect="dark" content="下载为excel格式文件" placement="left">
@@ -233,7 +236,8 @@ export default {
   },
 
   computed: {
-    ...mapState(["projectBasicId"])
+    ...mapState(["projectBasicId"]),
+    ...mapState(["roleInProject"])
   },
 
   methods: {
@@ -389,6 +393,7 @@ export default {
           this.basicInfo = response.data.data;
           this.editStateValue = this.basicInfo.state;
         }
+        console.log(this.roleInProject)
       });
     },
     getFuncList() {
@@ -455,6 +460,24 @@ export default {
           console.log(response);
           if (response.data.code === 0) {
             this.$message.success("添加归档链接成功！");
+            this.editStateValue = "申请归档";
+            axios
+              .put(
+                "/api/state",
+                qs.stringify({
+                  projectId: this.projectBasicId,
+                  state: this.editStateValue
+                })
+              )
+              .then(response => {
+                if (response.data.code === 0) {
+                  this.basicInfo.state = this.editStateValue;
+                  console.log(this.basicInfo.state);
+                  this.editState = false;
+                } else {
+                  this.$message.error("设置状态失败！");
+                }
+              });
           } else {
             this.$message.error("添加归档链接失败！");
           }

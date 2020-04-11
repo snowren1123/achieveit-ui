@@ -91,6 +91,7 @@ export default {
               console.log("BySolver");
               console.log(response.data.data);
               this.reviewList = response.data.data;
+              this.reviewListCopy = this.reviewList;
               this.total = this.reviewList.length;
             } else {
               this.$message.error("获取评审缺陷列表失败！");

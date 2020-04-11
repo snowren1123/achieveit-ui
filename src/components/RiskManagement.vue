@@ -8,6 +8,7 @@
         </el-col>
         <el-col :span="3" style="display: flex;">
           <el-button
+            v-show="roleInProject == '项目经理'"
             class="btn-dwn"
             type="warning"
             size="medium"
@@ -28,7 +29,13 @@
             :show-file-list="isUpload"
             style="display: flex;"
           >
-            <el-button v-show="showUploadBtn" type="primary" size="medium" plain circle>
+            <el-button
+              v-show="(roleInProject == '项目经理') && showUploadBtn"
+              type="primary"
+              size="medium"
+              plain
+              circle
+            >
               <i class="el-icon-document-add"></i>
             </el-button>
           </el-upload>
@@ -63,14 +70,22 @@
                 <span>{{ props.row.reactiveStrategy }}</span>
               </el-form-item>
               <el-form-item label="风险相关人员">
-                <el-tag
-                  class="tag-relate"
-                  v-for="person in props.row.riskRelatedIds"
-                  :key="person.riskRelatedId"
-                  closable
-                  type="danger"
-                  @close="tagHandleClose(props.row.riskId, person.riskRelatedId)"
-                >{{ person.riskRelatedId }}</el-tag>
+                <template v-for="person in props.row.riskRelatedIds">
+                  <el-tag
+                    v-if="roleInProject == '项目经理'"
+                    class="tag-relate"
+                    :key="person.riskRelatedId"
+                    closable
+                    type="danger"
+                    @close="tagHandleClose(props.row.riskId, person.riskRelatedId)"
+                  >{{ person.riskRelatedId }}</el-tag>
+                  <el-tag
+                    v-else
+                    class="tag-relate"
+                    :key="person.riskRelatedId"
+                    type="danger"
+                  >{{ person.riskRelatedId }}</el-tag>
+                </template>
                 <el-select
                   placeholder="请选择"
                   class="input-new-tag"
@@ -88,6 +103,7 @@
                   ></el-option>
                 </el-select>
                 <el-button
+                  v-show="roleInProject == '项目经理'"
                   v-else
                   class="button-new-tag"
                   size="small"
@@ -96,6 +112,7 @@
                   plain
                 >+ 新增</el-button>
                 <el-button
+                  v-show="roleInProject == '项目经理'"
                   size="small"
                   icon="el-icon-refresh"
                   @click="showRefreshDialog(props.row.riskId)"
@@ -112,7 +129,7 @@
         <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable></el-table-column>
         <el-table-column label="风险影响度" prop="influence"></el-table-column>
         <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" v-if="roleInProject == '项目经理'">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="修改" placement="top">
               <el-button
@@ -395,7 +412,8 @@ export default {
   },
   computed: {
     ...mapState(["personId"]),
-    ...mapState(["projectBasicId"])
+    ...mapState(["projectBasicId"]),
+    ...mapState(["roleInProject"])
   },
   methods: {
     getRiskList() {

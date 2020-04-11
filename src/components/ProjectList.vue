@@ -16,7 +16,7 @@
           </el-input>
         </el-col>
         <el-col style="margin-left:20px">
-          <el-button type="primary" @click="addProject" plain round>
+          <el-button v-show="personTitle == '项目经理'" type="primary" @click="addProject" plain round>
             <i class="el-icon-plus"></i>新建
           </el-button>
         </el-col>
@@ -212,7 +212,8 @@ export default {
     this.getProjectsList();
   },
   computed: {
-    ...mapState(["personId"])
+    ...mapState(["personId"]),
+    ...mapState(["personTitle"])
   },
   methods: {
     submitForm() {
@@ -236,6 +237,16 @@ export default {
     toProjectDetail(id) {
       this.$router.push("/project");
       this.$store.commit("setProjectBasicId", id);
+      var roleInProject = "";
+      axios.get("/api/memberinfo/" + id).then(response => {
+        if(response.data.code === 0){
+          roleInProject = response.data.data.role;
+          this.$store.commit("setRoleInProject", roleInProject);
+          console.log(roleInProject);
+        } else {
+          this.$message.error("无法获取用户在项目中信息！")
+        }
+      })
     },
     getProjectsList() {
       axios.get("/api/project_infos").then(response => {

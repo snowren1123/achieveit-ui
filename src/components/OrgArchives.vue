@@ -2,7 +2,7 @@
   <el-main>
     <el-card shadow="always">
       <el-table :data="endProjectsList" border stripe>
-        <el-table-column label="项目列表(已结束)-验收归档资料">
+        <el-table-column label="项目列表(申请归档)-验收归档资料">
           <template slot-scope="scope">
             <el-row>
               <el-col>项目名称：{{scope.row.projectName}}</el-col>
