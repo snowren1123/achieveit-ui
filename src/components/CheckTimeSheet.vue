@@ -216,7 +216,7 @@ export default {
 }
 
 .el-table {
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
 .el-table-column {
@@ -226,9 +226,5 @@ export default {
 p {
   font-size: 13px;
   line-height: 1.7;
-}
-
-.el-card {
-  padding-top: 10px;
 }
 </style>

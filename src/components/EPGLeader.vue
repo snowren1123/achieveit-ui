@@ -2,10 +2,15 @@
   <el-container>
     <!-- 头部区域 -->
     <el-header>
-      <div>
-        <img src="../assets/logo.png" alt />
-        <span>软件项目管理系统</span>
-      </div>
+      <el-row type="flex" justify="space-between">
+        <el-col :span="8">
+          <div>
+            <img src="../assets/logo.png" />
+            <span>软件项目管理系统</span>
+          </div>
+        </el-col>
+        <el-col :span="3">欢迎您，{{personInfo.employeeName}}</el-col>
+      </el-row>
     </el-header>
 
     <el-container>
@@ -209,8 +214,6 @@ export default {
 
 .el-header {
   background-color: #b3c0d1;
-  display: flex;
-  align-items: center;
   color: #fff;
   font-size: 20px;
 }
@@ -256,7 +259,7 @@ export default {
 }
 
 .el-table {
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
 .el-table-column {
@@ -278,9 +281,5 @@ export default {
 p {
   font-size: 13px;
   line-height: 1.7;
-}
-
-.el-card {
-  padding-top: 10px;
 }
 </style>

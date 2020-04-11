@@ -562,7 +562,7 @@ export default {
 }
 
 .el-table {
-  margin: 15px 0;
+  margin-bottom: 15px;
 }
 
 .el-table-column {

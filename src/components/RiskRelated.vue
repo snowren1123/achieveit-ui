@@ -3,6 +3,11 @@
   <el-main>
     <!-- 相关风险列表 -->
     <el-card shadow="always">
+      <el-row type="flex" justify="space-between" align="middle">
+        <el-col :span="8">
+          <div style="font-size:18px">与我相关的风险信息</div>
+        </el-col>
+      </el-row>
       <el-table
         :data="riskRelatedListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @sort-change="sortRiskRelated"
@@ -102,11 +107,7 @@ export default {
 
 <style scoped>
 .el-table {
-  margin: 15px 0;
-}
-
-.el-card {
-  padding-top: 10px;
+  margin-bottom: 15px;
 }
 
 .demo-table-expand label {

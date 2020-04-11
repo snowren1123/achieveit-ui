@@ -650,10 +650,6 @@ export default {
   margin: 15px 0;
 }
 
-.el-card {
-  padding-top: 10px;
-}
-
 .btn-dwn {
   margin-left: 10px;
   margin-right: 10px;
