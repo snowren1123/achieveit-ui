@@ -31,11 +31,6 @@
             slot-scope="scope"
           >{{scope.row.startTime.slice(0,5)}} 至 {{scope.row.endTime.slice(0,5)}}</template>
         </el-table-column>
-        <el-table-column prop="state" label="状态" width="80">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.state == '已提交'">{{scope.row.state}}</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column label="操作" width="95">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="通过" placement="top">

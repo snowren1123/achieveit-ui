@@ -71,7 +71,8 @@ export default {
       reviewListCopy: [],
       currentPage: 1,
       pageSize: 6,
-      total: 0
+      total: 0,
+      myFilters: []
     };
   },
   created() {
@@ -99,13 +100,13 @@ export default {
     },
     reviewListFilter(filters) {
       console.log(filters);
-      //this.filtersArray.push(filters);
-      if (filters.type) {
-        if (filters.type.length == 0) {
+      this.myFilters = filters;
+      if (this.myFilters.type) {
+        if (this.myFilters.type.length == 0) {
           this.reviewListCopy = this.reviewList;
         } else {
           this.reviewListCopy = this.reviewList.filter(
-            item => filters.type.indexOf(item.type) != -1
+            item => this.myFilters.type.indexOf(item.type) != -1
           );
         }
         this.total = this.reviewListCopy.length;

@@ -8,6 +8,7 @@
         </span>
         <el-table
           :data="deviceListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+          @filter-change="filterDeviceList"
           @sort-change="sortDevice"
           border
           stripe
@@ -17,7 +18,14 @@
           <el-table-column prop="checkinDate" label="分配日期" sortable="custom">
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column prop="returnDate" label="归还日期">
+          <el-table-column
+            prop="returnDate"
+            label="归还日期"
+            :filters="[{ text: '已归还', value: '已归还' },{ text: '未归还', value: '未归还' }]"
+            :column-key="'returnDate'"
+            :filter-multiple="false"
+            filter-placement="bottom-end"
+          >
             <template slot-scope="scope">
               <span v-if="scope.row.returnDate != null">{{scope.row.returnDate.slice(0,10)}}</span>
               <span v-else>暂未归还</span>
@@ -50,6 +58,7 @@
         </span>
         <el-table
           :data="myDeviceListCopy.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+          @filter-change="filterMyDeviceList"
           @sort-change="sortMyDevice"
           border
           stripe
@@ -59,7 +68,14 @@
           <el-table-column prop="checkinDate" label="分配日期" sortable="custom">
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column prop="returnDate" label="归还日期">
+          <el-table-column
+            prop="returnDate"
+            label="归还日期"
+            :filters="[{ text: '已归还', value: '已归还' },{ text: '未归还', value: '未归还' }]"
+            :column-key="'returnDate'"
+            :filter-multiple="false"
+            filter-placement="bottom-end"
+          >
             <template slot-scope="scope">
               <span v-if="scope.row.returnDate != null">{{scope.row.returnDate.slice(0,10)}}</span>
               <span v-else>暂未归还</span>
@@ -205,6 +221,7 @@ export default {
       pageSize: 6,
       total: 0,
       col: {},
+      myFilters: [],
 
       myDeviceList: [],
       myDeviceListCopy: [],
@@ -212,6 +229,7 @@ export default {
       pageSize1: 6,
       total1: 0,
       col1: {},
+      myFilters1: [],
 
       // 分配设备数据
       addDialogFormRules: {
@@ -265,7 +283,7 @@ export default {
           this.deviceList = response.data.data;
           this.deviceListCopy = this.deviceList;
           this.total = this.deviceListCopy.length;
-          this.sortDevice(this.col);
+          this.filterDeviceList(this.myFilters);
         } else {
           this.$message.error("获取项目设备列表失败！");
         }
@@ -282,7 +300,7 @@ export default {
           );
           this.myDeviceListCopy = this.myDeviceList;
           this.total1 = this.myDeviceListCopy.length;
-          this.sortMyDevice(this.col1);
+          this.filterMyDeviceList(this.myFilters1);
         } else {
           this.$message.error("获取我的设备列表失败！");
         }
@@ -376,6 +394,50 @@ export default {
       if (this.col1["order"] == "descending") {
         this.myDeviceListCopy.reverse();
       }
+    },
+
+    // 设备筛选
+    filterDeviceList(filters) {
+      this.myFilters = filters;
+      console.log(filters);
+      if (this.myFilters.returnDate) {
+        if (this.myFilters.returnDate.length == 0) {
+          this.deviceListCopy = this.deviceList;
+        } else if (this.myFilters.returnDate[0] == "已归还") {
+          this.deviceListCopy = this.deviceList.filter(
+            item => item.returnDate != null
+          );
+        } else if (this.myFilters.returnDate[0] == "未归还") {
+          this.deviceListCopy = this.deviceList.filter(
+            item => item.returnDate == null
+          );
+        }
+        this.total = this.deviceListCopy.length;
+        this.pageSize = 6;
+        this.currentPage = 1;
+      }
+      this.sortDevice(this.col);
+    },
+    filterMyDeviceList(filters) {
+      this.myFilters = filters;
+      console.log(filters);
+      if (this.myFilters.returnDate) {
+        if (this.myFilters.returnDate.length == 0) {
+          this.myDeviceListCopy = this.myDeviceList;
+        } else if (this.myFilters.returnDate[0] == "已归还") {
+          this.myDeviceListCopy = this.myDeviceList.filter(
+            item => item.returnDate != null
+          );
+        } else if (this.myFilters.returnDate[0] == "未归还") {
+          this.myDeviceListCopy = this.myDeviceList.filter(
+            item => item.returnDate == null
+          );
+        }
+        this.total1 = this.myDeviceListCopy.length;
+        this.pageSize1 = 6;
+        this.currentPage1 = 1;
+      }
+      this.sortMyDevice(this.col1);
     }
   }
 };

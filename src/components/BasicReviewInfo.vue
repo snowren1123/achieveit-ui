@@ -296,6 +296,7 @@ export default {
             this.reviewList = response.data.data;
             this.total = this.reviewList.length;
             this.reviewListCopy = this.reviewList;
+            this.reviewListFilter(this.myFilters);
           } else {
             this.$message.error("获取评审缺陷列表失败！");
           }

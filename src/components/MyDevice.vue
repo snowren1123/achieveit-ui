@@ -8,6 +8,7 @@
         </span>
         <el-table
           :data="myDeviceListCopy.slice((currentPage1-1)*pageSize1,currentPage1*pageSize1)"
+          @filter-change="filterMyDeviceList"
           @sort-change="sortMyDevice"
           stripe
         >
@@ -17,7 +18,14 @@
           <el-table-column prop="checkinDate" label="分配日期" sortable="custom">
             <template slot-scope="scope">{{scope.row.checkinDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column prop="returnDate" label="归还日期">
+          <el-table-column
+            prop="returnDate"
+            label="归还日期"
+            :filters="[{ text: '已归还', value: '已归还' },{ text: '未归还', value: '未归还' }]"
+            :column-key="'returnDate'"
+            :filter-multiple="false"
+            filter-placement="bottom-end"
+          >
             <template slot-scope="scope">
               <span v-if="scope.row.returnDate != null">{{scope.row.returnDate.slice(0,10)}}</span>
               <span v-else>暂未归还</span>
@@ -96,7 +104,8 @@ export default {
       currentPage1: 1,
       pageSize1: 6,
       total1: 0,
-      col: {}
+      col: {},
+      myFilters: []
     };
   },
   created() {
@@ -122,7 +131,7 @@ export default {
           this.myDeviceList = response.data.data;
           this.myDeviceListCopy = this.myDeviceList;
           this.total1 = this.myDeviceListCopy.length;
-          this.sortMyDevice(this.col);
+          this.filterMyDeviceList(this.myFilters);
         } else {
           this.$message.error("获取我的设备列表失败！");
         }
@@ -162,6 +171,29 @@ export default {
       if (this.col["order"] == "descending") {
         this.myDeviceListCopy.reverse();
       }
+    },
+
+    // 表格筛选方法
+    filterMyDeviceList(filters) {
+      this.myFilters = filters;
+      console.log(filters);
+      if (this.myFilters.returnDate) {
+        if (this.myFilters.returnDate.length == 0) {
+          this.myDeviceListCopy = this.myDeviceList;
+        } else if (this.myFilters.returnDate[0] == "已归还") {
+          this.myDeviceListCopy = this.myDeviceList.filter(
+            item => item.returnDate != null
+          );
+        } else if (this.myFilters.returnDate[0] == "未归还") {
+          this.myDeviceListCopy = this.myDeviceList.filter(
+            item => item.returnDate == null
+          );
+        }
+        this.total1 = this.myDeviceListCopy.length;
+        this.pageSize1 = 6;
+        this.currentPage1 = 1;
+      }
+      this.sortMyDevice(this.col);
     }
   }
 };

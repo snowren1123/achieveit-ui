@@ -286,7 +286,7 @@ export default {
           this.timesheetList = response.data.data;
           this.timesheetListCopy = this.timesheetList;
           this.total = this.timesheetListCopy.length;
-          this.filterTimesheetList(this.col);
+          this.filterTimesheetList(this.myFilters);
         } else {
           this.$message.error("获取工时列表失败！");
         }
