@@ -286,7 +286,7 @@ export default {
           this.total = this.deviceListCopy.length;
           this.filterDeviceList(this.myFilters);
         } else {
-          //this.$message.error("获取项目设备列表失败！");
+          this.$message.error("获取项目设备列表失败！");
         }
       });
     },
@@ -315,7 +315,9 @@ export default {
         if (response.data.code === 0) {
           this.newDeviceList = response.data.data;
         } else {
-          this.$message.error("获取可选设备列表失败！");
+          if (this.roleInProject == "项目经理") {
+            this.$message.error("获取可选设备列表失败！");
+          }
         }
       });
     },
