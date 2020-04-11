@@ -11,6 +11,7 @@
       <el-table
         :data="riskRelatedListCopy.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         @sort-change="sortRiskRelated"
+        @filter-change="filterRiskRelated"
         stripe
       >
         <el-table-column type="expand">
@@ -31,7 +32,13 @@
         <el-table-column label="风险ID" prop="riskId" sortable="custom"></el-table-column>
         <el-table-column label="风险类型" prop="type"></el-table-column>
         <el-table-column label="风险等级" prop="riskLevel" sortable="custom"></el-table-column>
-        <el-table-column label="风险状态" prop="riskState"></el-table-column>
+        <el-table-column
+          label="风险状态"
+          prop="riskState"
+          :filters="[{ text: '潜在', value: '潜在' },{ text: '正常', value: '正常' },{ text: '异常', value: '异常' },{ text: '紧急', value: '紧急' },{ text: '已解决', value: '已解决' }]"
+          :column-key="'riskState'"
+          filter-placement="bottom-end"
+        ></el-table-column>
         <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable="custom"></el-table-column>
         <el-table-column label="所属项目" prop="projectId"></el-table-column>
         <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
@@ -64,7 +71,8 @@ export default {
       currentPage: 1,
       pageSize: 8,
       total: 0,
-      col: {}
+      col: {},
+      myFilters: []
     };
   },
   created() {
@@ -81,7 +89,7 @@ export default {
           this.riskRelatedList = response.data.data;
           this.riskRelatedListCopy = this.riskRelatedList;
           this.total = this.riskRelatedListCopy.length;
-          this.sortRiskRelated(this.col);
+          this.filterRiskRelated(this.myFilters);
         } else {
           this.$message.error("获取相关风险列表失败！");
         }
@@ -100,6 +108,24 @@ export default {
       if (this.col["order"] == "descending") {
         this.riskRelatedListCopy.reverse();
       }
+    },
+
+    // 相关风险筛选
+    filterRiskRelated(filters) {
+      this.myFilters = filters;
+      if (this.myFilters.riskState) {
+        if (this.myFilters.riskState.length == 0) {
+          this.riskRelatedListCopy = this.riskRelatedList;
+        } else {
+          this.riskRelatedListCopy = this.riskRelatedList.filter(
+            item => this.myFilters.riskState.indexOf(item.riskState) != -1
+          );
+        }
+        this.total = this.riskRelatedListCopy.length;
+        this.pageSize = 8;
+        this.currentPage = 1;
+      }
+      this.sortRiskRelated(this.col);
     }
   }
 };
