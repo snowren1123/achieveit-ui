@@ -1,9 +1,165 @@
 <template>
   <el-main>
-    <el-tabs tab-position="right" style="height: 600px;">
-      <el-tab-pane label="项目ID">{{ basicInfo.projectId }}</el-tab-pane>
-      <el-tab-pane label="项目名称">{{ basicInfo.projectName }}</el-tab-pane>
-      <el-tab-pane label="项目状态">
+    <el-tabs type="border-card" style="height: 600px;">
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-help"></i>基本信息</span>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-tag type="success" class="tag-property">项目ID</el-tag>
+            {{ basicInfo.projectId }}
+          </el-col>
+          <el-col :span="12">
+            <el-tag class="tag-property">采用技术</el-tag>
+            {{ basicInfo.technology }}
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-tag type="success" class="tag-property">项目名称</el-tag>
+            {{ basicInfo.projectName }}
+          </el-col>
+          <el-col :span="12">
+            <el-tag class="tag-property">主要功能</el-tag>
+            {{ basicInfo.mainFunctions }}
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-tag type="warning" class="tag-property">项目上级</el-tag>
+            {{ basicInfo.projectBossId }}
+          </el-col>
+          <el-col :span="12">
+            <el-tag class="tag-property">业务领域</el-tag>
+            {{ basicInfo.businessDomain }}
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-tag type="warning" class="tag-property">项目周期</el-tag>
+            {{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}
+          </el-col>
+          <el-col :span="12">
+            <el-tag class="tag-property">主要里程碑</el-tag>
+            {{ basicInfo.milestone }}
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <div class="grid-content">
+            <el-button round @click="preEditProject()">
+              <i class="el-icon-edit"></i>点击此处编辑
+            </el-button>
+          </div>
+
+          <!-- 编辑项目信息对话框 -->
+          <el-dialog
+            title="编辑项目基本信息"
+            :visible.sync="editProjectVisible"
+            @close="editProjectDialogClosed"
+          >
+            <el-form
+              :model="basicInfo"
+              label-width="100px"
+              label-position="left"
+              :rules="editDialogFormRules"
+              ref="editDialogFormRef"
+            >
+              <el-form-item label="项目ID" prop="projectId">
+                <el-input
+                  :placeholder="projectBasicId"
+                  v-model="projectBasicId"
+                  :disabled="true"
+                  style="width: 217px;"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="项目名称" prop="projectName">
+                <el-input
+                  :placeholder="basicInfo.projectName"
+                  v-model="basicInfo.projectName"
+                  :disabled="true"
+                  style="width: 217px;"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="客户ID" prop="clientId">
+                <el-select
+                  v-model="basicInfo.clientId"
+                  clearable
+                  placeholder="请选择客户ID"
+                  style="width: 217px;"
+                >
+                  <el-option v-for="item in clientIds" :key="item" :label="item" :value="item"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="项目周期">
+                <el-col :span="11">
+                  <el-form-item prop="expStartDate">
+                    <el-date-picker
+                      type="date"
+                      :placeholder="basicInfo.expStartDate"
+                      v-model="basicInfo.expStartDate"
+                      style="width: 100%;"
+                      value-format="yyyy-MM-dd"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col class="line" :span="1" style="text-align:center">-</el-col>
+                <el-col :span="11">
+                  <el-form-item prop="expEndDate">
+                    <el-date-picker
+                      type="date"
+                      :placeholder="basicInfo.expEndDate"
+                      v-model="basicInfo.expEndDate"
+                      style="width: 100%;"
+                      value-format="yyyy-MM-dd"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-form-item>
+              <el-form-item label="采用技术">
+                <el-input
+                  type="textarea"
+                  :placeholder="basicInfo.technology"
+                  v-model="basicInfo.technology"
+                  autocomplete="off"
+                  style="width:400px;"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="业务领域">
+                <el-input
+                  type="textarea"
+                  :placeholder="basicInfo.businessDomain"
+                  v-model="basicInfo.businessDomain"
+                  autocomplete="off"
+                  style="width:400px;"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="主要功能">
+                <el-input
+                  type="textarea"
+                  placeholder="basicInfo.mainFunctions"
+                  v-model="basicInfo.mainFunctions"
+                  autocomplete="off"
+                  style="width:400px;"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="主要里程碑">
+                <el-input
+                  type="textarea"
+                  :placeholder="basicInfo.milestone"
+                  v-model="basicInfo.milestone"
+                  autocomplete="off"
+                  style="width:400px;"
+                ></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="submitEditProjectForm()">确认修改</el-button>
+              <el-button @click="editProjectVisible = false">取消</el-button>
+            </div>
+          </el-dialog>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-table-lamp"></i>项目状态</span>
         <el-tag v-show="!editState" v-if="basicInfo.state == '同意立项'">同意立项</el-tag>
         <el-tag v-show="!editState" v-if="basicInfo.state == '进行中'">进行中</el-tag>
         <el-tag type="success" v-show="!editState" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
@@ -61,20 +217,10 @@
           </div>
         </el-dialog>
       </el-tab-pane>
-      <el-tab-pane label="项目上级">{{ basicInfo.projectBossId }}</el-tab-pane>
-      <el-tab-pane label="项目周期">{{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}</el-tab-pane>
-      <el-tab-pane label="主要功能">{{ basicInfo.mainFunctions }}</el-tab-pane>
-      <el-tab-pane label="采用技术">{{ basicInfo.technology }}</el-tab-pane>
-      <el-tab-pane label="业务领域">{{ basicInfo.businessDomain }}</el-tab-pane>
-      <el-tab-pane label="功能列表">
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-coffee-cup"></i>功能列表</span>
         <el-row>
-          <el-tree
-            :data="funcsData"
-            show-checkbox
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false"
-          >
+          <el-tree :data="funcsData" node-key="id" default-expand-all :expand-on-click-node="false">
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span>{{ node.label }}</span>
               <span style="margin-right: 15px;">
@@ -160,7 +306,14 @@
             :show-file-list="isUpload"
           >
             <el-tooltip class="item" effect="dark" content="上传excel文件" placement="left">
-              <el-button v-show="roleInProject == '项目经理'" type="primary" size="medium" icon="el-icon-document-add" circle plain></el-button>
+              <el-button
+                v-show="roleInProject == '项目经理'"
+                type="primary"
+                size="medium"
+                icon="el-icon-document-add"
+                circle
+                plain
+              ></el-button>
             </el-tooltip>
           </el-upload>
           <el-tooltip class="item" effect="dark" content="下载为excel格式文件" placement="left">
@@ -175,7 +328,6 @@
           </el-tooltip>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane label="主要里程碑">{{ basicInfo.milestone }}</el-tab-pane>
     </el-tabs>
   </el-main>
 </template>
@@ -202,7 +354,10 @@ export default {
         milestone: "",
         technology: "",
         businessDomain: "",
-        mainFunctions: ""
+        mainFunctions: "",
+        outputLink: "",
+        gitAddress: "",
+        fileSystemAddress: ""
       },
       stateOptions: [
         { label: "进行中", value: "进行中" },
@@ -213,7 +368,24 @@ export default {
       uploadHeaders: {
         Authorization: "Bearer " + Cookie.get("token")
       },
+      editDialogFormRules: {
+        expStartDate: [
+          {
+            type: "string",
+            message: "请选择开始时间",
+            trigger: "change"
+          }
+        ],
+        expEndDate: [
+          {
+            type: "string",
+            message: "请选择结束时间",
+            trigger: "change"
+          }
+        ]
+      },
       excelFileList: [],
+      clientIds: [],
       editFuncValue: "",
       addPriFuncValue: "",
       addSecFuncValue: "",
@@ -226,7 +398,8 @@ export default {
       addPriFuncVisible: false,
       addSecFuncVisible: false,
       editState: false,
-      outLinkDialogVisible: false
+      outLinkDialogVisible: false,
+      editProjectVisible: false
     };
   },
 
@@ -241,6 +414,47 @@ export default {
   },
 
   methods: {
+    preEditProject() {
+      this.editProjectVisible = true;
+      axios.get("/api/client/ids").then(response => {
+        if (response.data.code === 0) {
+          console.log(response.data.data);
+          this.clientIds = response.data.data.clientIds;
+        } else {
+          this.$message.error("获取可选客户ID失败！");
+        }
+      });
+    },
+    submitEditProjectForm() {
+      console.log(this.basicInfo);
+      this.basicInfo.expStartDate = this.dateFormat(
+            this.basicInfo.expStartDate
+          );
+          this.basicInfo.expEndDate = this.dateFormat(
+            this.basicInfo.expEndDate
+          );
+      this.$refs.editDialogFormRef.validate(async valid => {
+        if (!valid) return;
+        axios
+          .post("/api/updateprojectinfo", qs.stringify(this.basicInfo))
+          .then(response => {
+            if (response.data.code === 0) {
+              this.$message.success("修改项目信息成功！");
+            } else {
+              this.$message.error("修改项目信息失败！");
+            }
+            this.editProjectVisible = false;
+            this.getDetailInfo();
+          });
+      });
+    },
+    dateFormat: function(originVal) {
+      const dt = new Date(originVal);
+      const y = dt.getFullYear();
+      const m = (dt.getMonth() + 1 + "").padStart(2, "0");
+      const d = (dt.getDate() + "").padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    },
     appendPriFunc(addPriFuncValue) {
       var newPriFunc = {
         id: id++,
@@ -354,6 +568,9 @@ export default {
         });
       });
     },
+    editProjectDialogClosed: function() {
+      this.$refs.editDialogFormRef.resetFields();
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -391,9 +608,15 @@ export default {
         if (response.data.code === 0) {
           console.log(response.data.data);
           this.basicInfo = response.data.data;
+          this.basicInfo.expStartDate = this.dateFormat(
+            this.basicInfo.expStartDate
+          );
+          this.basicInfo.expEndDate = this.dateFormat(
+            this.basicInfo.expEndDate
+          );
           this.editStateValue = this.basicInfo.state;
         }
-        console.log(this.roleInProject)
+        console.log(this.roleInProject);
       });
     },
     getFuncList() {
@@ -550,6 +773,23 @@ export default {
 .el-row {
   margin-bottom: 20px;
 }
+.el-col {
+  border-radius: 4px;
+}
+
+.tag-property {
+  margin-right: 10px;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+  padding-left: 85%;
+}
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
 
 .el-select {
   width: 20%;
@@ -578,9 +818,24 @@ export default {
   padding-right: 8px;
 }
 
+.el-col-11 {
+  padding-left: 0 !important;
+}
+
+.el-col-1 {
+  margin-right: 15px;
+}
+
 .mini-btn-set {
   background-color: transparent;
   border-color: transparent;
   margin: 0;
+}
+.el-form-item__content {
+  margin-left: 30px !important;
+}
+
+.el-form-item__label {
+  padding: 0;
 }
 </style>

@@ -25,9 +25,6 @@
               <el-menu-item index="/project/basic">
                 <i class="el-icon-info"></i>属性信息
               </el-menu-item>
-              <el-menu-item index="/project/client">
-                <i class="el-icon-s-custom"></i>客户信息
-              </el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group title="Members">
               <el-menu-item index="/project/team">

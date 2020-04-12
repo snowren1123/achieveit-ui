@@ -29,8 +29,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm()">确认</el-button>
-          <el-button @click="addDomain()">注册</el-button>
-          <el-button @click="resetForm()">忘记密码</el-button>
+          <el-button @click="addDomain()" disabled>注册</el-button>
+          <el-button @click="resetForm()" disabled>忘记密码</el-button>
         </el-form-item>
       </el-form>
     </div>
