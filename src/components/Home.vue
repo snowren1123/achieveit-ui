@@ -52,16 +52,16 @@
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="3">
+          <el-submenu index="3" v-show="(personTitle.indexOf('测试') != -1) || (personTitle.indexOf('开发') != -1)">
             <template slot="title">
               <i class="el-icon-data-analysis"></i>评审缺陷
             </template>
             <el-menu-item-group>
               <template slot="title">查看评缺</template>
-              <el-menu-item v-show="personInfo.title == '测试'" index="/home/myreportreview">
+              <el-menu-item v-show="personTitle.indexOf('测试') != -1" index="/home/myreportreview">
                 <i class="el-icon-mic"></i>我的报告
               </el-menu-item>
-              <el-menu-item v-show="personInfo.title == '开发'" index="/home/myprocessreview">
+              <el-menu-item v-show="personTitle.indexOf('开发') != -1" index="/home/myprocessreview">
                 <i class="el-icon-coordinate"></i>我的处理
               </el-menu-item>
             </el-menu-item-group>
@@ -109,7 +109,8 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      personInfo: {}
+      personInfo: {},
+      personTitle: ''
     };
   },
   created() {
@@ -144,7 +145,9 @@ export default {
       axios.get("/api/employee/" + this.personId).then(response => {
         if (response.data.code === 0) {
           this.personInfo = response.data.data;
+          console.log("personInfo");
           console.log(this.personInfo);
+          this.personTitle = this.personInfo.title;
           this.$store.commit("setUserTitle", this.personInfo.title);
         } else {
           this.$message.error("获取用户信息失败！");
