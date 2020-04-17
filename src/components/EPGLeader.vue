@@ -44,15 +44,6 @@
           >
             <el-table-column label="项目列表">
               <template slot-scope="scope">
-                <el-tag
-                  type="success"
-                  v-if="scope.row.projectBasicInfo.state === '申请立项'"
-                >{{scope.row.projectBasicInfo.state}}</el-tag>
-                <el-tag
-                  type="danger"
-                  v-else-if="scope.row.projectBasicInfo.state === '驳回立项'"
-                >{{scope.row.projectBasicInfo.state}}</el-tag>
-                <el-tag v-else>{{scope.row.projectBasicInfo.state}}</el-tag>
                 <el-row>项目名称：{{scope.row.projectBasicInfo.projectName}}</el-row>
                 <el-row>项目周期：{{scope.row.projectBasicInfo.expStartDate.slice(0,10)}} 至 {{scope.row.projectBasicInfo.expEndDate.slice(0,10)}}</el-row>
                 <el-row>
@@ -82,7 +73,7 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[2, 4, 6, 10]"
+            :page-sizes="[3, 6, 9, 12]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
@@ -129,7 +120,7 @@ export default {
       personInfo: {},
       projectsList: [],
       currentPage: 1,
-      pageSize: 2,
+      pageSize: 3,
       total: 0,
       keyWord: "",
       addEPGVisible: false,
@@ -264,11 +255,6 @@ export default {
 
 .el-table-column {
   position: relative;
-}
-
-.el-tag {
-  position: absolute;
-  right: 10px;
 }
 
 .add-epg {
