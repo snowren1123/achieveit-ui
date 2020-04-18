@@ -30,7 +30,7 @@
             style="display: flex;"
           >
             <el-button
-              v-show="(roleInProject == '项目经理') && showUploadBtn"
+              v-show="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理') && showUploadBtn"
               type="primary"
               size="medium"
               plain
@@ -72,7 +72,7 @@
               <el-form-item label="风险相关人员">
                 <template v-for="person in props.row.riskRelatedIds">
                   <el-tag
-                    v-if="roleInProject == '项目经理'"
+                    v-if="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                     class="tag-relate"
                     :key="person.riskRelatedId"
                     closable
@@ -103,7 +103,7 @@
                   ></el-option>
                 </el-select>
                 <el-button
-                  v-show="roleInProject == '项目经理'"
+                  v-show="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                   v-else
                   class="button-new-tag"
                   size="small"
@@ -112,7 +112,7 @@
                   plain
                 >+ 新增</el-button>
                 <el-button
-                  v-show="roleInProject == '项目经理'"
+                  v-show="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                   size="small"
                   icon="el-icon-refresh"
                   @click="showRefreshDialog(props.row.riskId)"
@@ -129,7 +129,7 @@
         <el-table-column label="风险跟踪频度" prop="riskTrackFrequency" sortable></el-table-column>
         <el-table-column label="风险影响度" prop="influence"></el-table-column>
         <el-table-column label="风险责任人" prop="riskOwnerId"></el-table-column>
-        <el-table-column label="操作" v-if="roleInProject == '项目经理'">
+        <el-table-column label="操作" v-if="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="dark" content="修改" placement="top">
               <el-button
@@ -413,7 +413,8 @@ export default {
   computed: {
     ...mapState(["personId"]),
     ...mapState(["projectBasicId"]),
-    ...mapState(["roleInProject"])
+    ...mapState(["roleInProject"]),
+    ...mapState(["projectBasicState"])
   },
   methods: {
     getRiskList() {

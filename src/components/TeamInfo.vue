@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <template v-for="member in members">
         <el-col :span="8" v-bind:key="member.index">
-          <el-card shadow="hover">
+          <el-card :shadow="(member.role != '项目经理') ? 'hover' : 'always'">
             <div slot="header" class="clearfix">
               <span>{{ member.employeeName }}</span>
               <el-button
@@ -66,18 +66,18 @@
         :rules="addDialogFormRules"
         ref="addDialogFormRef"
       >
-        <el-form-item label="人员ID" prop="employeeId">
+        <el-form-item label="人员名称" prop="employeeId">
           <el-select v-model="memberInfo.employeeId" clearable placeholder="请选择人员">
             <el-option
               v-for="item in employees"
               :key="item.employeeId"
-              :label="item.employeeName"
+              :label="item.employeeName + '(' + item.title + ')'"
               :value="item.employeeId"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="职位" prop="role">
-          <el-select v-model="memberInfo.role" multiple clearable placeholder="请选择职位">
+          <el-select v-model="memberInfo.role" multiple placeholder="请选择职位">
             <el-option v-for="item in roles" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
@@ -303,7 +303,7 @@ export default {
     addMemberDialogShow() {
       this.memberInfo.projectId = this.projectBasicId;
 
-      axios.get("/api/employees").then(response => {
+      axios.get("/api/addibleEmployee/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
           this.employees = response.data.data;
         } else {

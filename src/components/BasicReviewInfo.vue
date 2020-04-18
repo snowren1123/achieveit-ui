@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="2">
           <el-button
-            v-show="roleInProject.indexOf('测试') != -1"
+            v-show="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject.indexOf('测试') != -1)"
             type="danger"
             size="medium"
             @click="reportVisible=true"
@@ -40,7 +40,8 @@
           </template>
         </el-table-column>
         <el-table-column width="150">
-          <template slot="header">
+          <template slot="header" slot-scope="scope">
+            <!-- !!!!!!!!!!!!!别改这里 会导致input无法输入 -->
             <el-input
               class="search-set"
               v-model="searchProvider"
@@ -48,9 +49,7 @@
               placeholder="报告人员"
               clearable
               @change="getBySearchProvider()"
-              @clear="getReviewList()"
-              @blur="providerBlur(searchProvider)"
-              @focus="getReviewList()"
+              @clear="getBySearchSolver()"
             ></el-input>
           </template>
           <template slot-scope="scope">{{ scope.row.providerId }}</template>
@@ -70,7 +69,8 @@
           </template>
         </el-table-column>
         <el-table-column width="155">
-          <template slot="header">
+          <template slot="header" slot-scope="scope">
+            <!-- !!!!!!!!!!!!!别改这里 会导致input无法输入 -->
             <el-input
               class="search-set"
               v-model="searchSolver"
@@ -78,16 +78,14 @@
               placeholder="处理人员"
               clearable
               @change="getBySearchSolver()"
-              @clear="getReviewList()"
-              @blur="solverBlur(searchSolver)"
-              @focus="getReviewList()"
+              @clear="getBySearchProvider()"
             ></el-input>
           </template>
           <template slot-scope="scope">
             <div v-if="scope.row.solverId == null">
               <el-tag type="info">暂无</el-tag>
               <el-button
-                v-show="roleInProject.indexOf('开发') != -1"
+                v-show="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject.indexOf('开发') != -1)"
                 type="primary"
                 size="small"
                 plain
@@ -292,11 +290,13 @@ export default {
   },
   created() {
     this.getReviewList();
+    
   },
   computed: {
     ...mapState(["projectBasicId"]),
     ...mapState(["personId"]),
-    ...mapState(["roleInProject"])
+    ...mapState(["roleInProject"]),
+    ...mapState(["projectBasicState"])
   },
   methods: {
     getReviewList() {
@@ -337,6 +337,8 @@ export default {
               this.$message.error("获取评审缺陷列表失败！");
             }
           });
+      } else {
+        this.getReviewList();
       }
     },
     providerBlur(searchProvider) {
@@ -369,6 +371,8 @@ export default {
               this.$message.error("获取评审缺陷列表失败！");
             }
           });
+      } else {
+        this.getReviewList();
       }
     },
     // 新建项目的评审缺陷

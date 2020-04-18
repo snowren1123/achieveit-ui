@@ -54,7 +54,8 @@
           <div class="grid-content">
             <el-button
               v-show="(projectBasicState == '驳回立项') && (roleInProject == '项目经理')"
-              round plain
+              round
+              plain
               type="danger"
               @click="deleteProject()"
             >
@@ -179,53 +180,32 @@
       </el-tab-pane>
       <el-tab-pane>
         <span slot="label">
-          <i class="el-icon-table-lamp"></i>项目状态<span v-show="projectBasicState == '驳回立项'">：{{ projectBasicState }}</span>
+          <i class="el-icon-table-lamp"></i>项目状态
+          <span>：{{ projectBasicState }}</span>
         </span>
-        <el-tag v-show="!editState" v-if="basicInfo.state == '同意立项'">同意立项</el-tag>
-        <el-tag v-show="!editState" v-if="basicInfo.state == '进行中'">进行中</el-tag>
-        <el-tag type="success" v-show="!editState" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
-        <el-tag type="info" v-show="!editState" v-else-if="basicInfo.state == '已结束'">已结束</el-tag>
-        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已归档'">已归档</el-tag>
-        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '申请归档'">申请归档</el-tag>
-        <el-tag type="warning" v-show="!editState" v-else-if="basicInfo.state == '已交付'">已交付</el-tag>
-        <el-tag type="danger" v-show="!editState" v-else-if="basicInfo.state == '驳回立项'">驳回立项</el-tag>
-        <el-select
-          v-show="editState"
-          v-model="editStateValue"
-          :placeholder="basicInfo.state"
-          clearable
-        >
-          <el-option
-            v-for="item in stateOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
+        <el-tag v-if="basicInfo.state == '同意立项'">同意立项</el-tag>
+        <el-tag v-if="basicInfo.state == '进行中'">进行中</el-tag>
+        <el-tag type="success" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
+        <el-tag type="info" v-else-if="basicInfo.state == '已结束'">已结束</el-tag>
+        <el-tag type="warning" v-else-if="basicInfo.state == '已归档'">已归档</el-tag>
+        <el-tag type="warning" v-else-if="basicInfo.state == '申请归档'">申请归档</el-tag>
+        <el-tag type="warning" v-else-if="basicInfo.state == '已交付'">已交付</el-tag>
+        <el-tag type="danger" v-else-if="basicInfo.state == '驳回立项'">驳回立项</el-tag>
+
         <el-button
-          v-show="(roleInProject == '项目经理') && !editState"
-          size="mini"
-          icon="el-icon-edit"
-          @click="editState=!editState"
-          circle
-          plain
-        ></el-button>
-        <el-button
-          v-show="editState"
-          type="primary"
+          v-show="(roleInProject == '项目经理') && ((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付') || (projectBasicState == '已结束'))"
           size="small"
+          icon="el-icon-magic-stick"
           @click="submitState()"
-          round
           plain
-        >确认修改</el-button>
-        <el-button
-          v-show="editState"
-          type="danger"
-          size="small"
-          @click="editState=!editState"
           round
-          plain
-        >取消</el-button>
+          style="margin:0 10px;"
+        >变更</el-button>
+        <el-tag v-if="nextStateOpt == '进行中'">进行中</el-tag>
+        <el-tag type="info" v-else-if="nextStateOpt == '已结束'">已结束</el-tag>
+        <el-tag type="warning" v-else-if="nextStateOpt == '申请归档'">申请归档</el-tag>
+        <el-tag type="warning" v-else-if="nextStateOpt == '已交付'">已交付</el-tag>
+
         <el-dialog title="请输入档案输出地址" :visible.sync="outLinkDialogVisible">
           <el-form>
             <el-form-item label="有效地址" label-width="80px" label-position="left">
@@ -302,7 +282,7 @@
             </div>
           </el-dialog>
           <el-button
-            v-show="roleInProject == '项目经理'"
+            v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
             class="mini-btn-set"
             type="success"
             icon="el-icon-circle-plus-outline"
@@ -330,7 +310,7 @@
           >
             <el-tooltip class="item" effect="dark" content="上传excel文件" placement="left">
               <el-button
-                v-show="roleInProject == '项目经理'"
+                v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                 type="primary"
                 size="medium"
                 icon="el-icon-document-add"
@@ -382,12 +362,6 @@ export default {
         gitAddress: "",
         fileSystemAddress: ""
       },
-      stateOptions: [
-        { label: "进行中", value: "进行中" },
-        { label: "申请归档", value: "申请归档" },
-        { label: "已结束", value: "已结束" },
-        { label: "已交付", value: "已交付" }
-      ],
       uploadHeaders: {
         Authorization: "Bearer " + Cookie.get("token")
       },
@@ -414,7 +388,8 @@ export default {
       addSecFuncValue: "",
       addSecFindPriId: 0,
       editFindId: 0,
-      editStateValue: "",
+      //editStateValue: "",
+      nextStateOpt: "",
       outputLink: "",
       isUpload: true,
       editFuncVisible: false,
@@ -429,6 +404,7 @@ export default {
   created() {
     this.getDetailInfo();
     this.getFuncList();
+    this.getNextState();
   },
 
   computed: {
@@ -447,6 +423,26 @@ export default {
         } else {
           this.$message.error("获取可选客户ID失败！");
         }
+      });
+    },
+    // 驳回立项状态下，删除项目信息
+    deleteProject() {
+      this.$confirm("确认删除项目信息？", "确认信息", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "danger",
+        center: false
+      }).then(() => {
+        axios
+          .delete("/api/deleteprojectinfo/" + this.projectBasicId)
+          .then(response => {
+            if (response.data.code === 0) {
+              this.$message.success("删除成功！此项目已被清理！");
+              this.$router.push("/home/projectlist");
+            } else {
+              this.$message.error("出错了！请稍后再试！");
+            }
+          });
       });
     },
     submitEditProjectForm() {
@@ -641,6 +637,18 @@ export default {
         console.log(this.roleInProject);
       });
     },
+    // 获取下一个可变更状态
+    getNextState() {
+      axios.get("/api/getstate/" + this.projectBasicId).then(response => {
+        if (response.data.code === 0) {
+          this.nextStateOpt = response.data.data;
+        } else {
+          if (this.roleInProject == "项目经理") {
+            this.$message.warning("无法获取该项目下一个可变更状态！");
+          }
+        }
+      });
+    },
     getFuncList() {
       axios.get("/api/function/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
@@ -705,20 +713,23 @@ export default {
           console.log(response);
           if (response.data.code === 0) {
             this.$message.success("添加归档链接成功！");
-            this.editStateValue = "申请归档";
             axios
               .put(
                 "/api/state",
                 qs.stringify({
                   projectId: this.projectBasicId,
-                  state: this.editStateValue
+                  state: "申请归档"
                 })
               )
               .then(response => {
                 if (response.data.code === 0) {
-                  this.basicInfo.state = this.editStateValue;
+                  this.basicInfo.state = "申请归档";
                   console.log(this.basicInfo.state);
-                  this.editState = false;
+                  this.projectBasicState = "申请归档";
+                  this.$store.commit("setProjectBasicState", "申请归档");
+                  this.nextStateOpt = "";
+                  this.$message.success("已修改状态为" + this.basicInfo.state);
+                  this.getNextState();
                 } else {
                   this.$message.error("设置状态失败！");
                 }
@@ -731,11 +742,11 @@ export default {
     },
 
     submitState() {
-      if (this.editStateValue == "申请归档") {
+      if (this.nextStateOpt == "申请归档") {
         this.outLinkDialogVisible = true;
       } else {
         this.$confirm(
-          "确认将状态修改为" + this.editStateValue + "?",
+          "确认将状态修改为" + this.nextStateOpt + "?",
           "确认信息",
           {
             confirmButtonText: "确定",
@@ -745,21 +756,23 @@ export default {
           }
         )
           .then(() => {
-            this.basicInfo.state = this.editStateValue;
+            this.basicInfo.state = this.nextStateOpt;
+            this.projectBasicState = this.nextStateOpt;
+            this.$store.commit("setProjectBasicState", this.projectBasicState);
             console.log(this.basicInfo.state);
-            this.editState = false;
             axios
               .put(
                 "/api/state",
                 qs.stringify({
                   projectId: this.projectBasicId,
-                  state: this.editStateValue
+                  state: this.nextStateOpt
                 })
               )
               .then(response => {
                 if (response.data.code === 0) {
                   this.$message.success("已修改状态为" + this.basicInfo.state);
                 }
+                this.getNextState();
               });
           })
           .catch(() => {
@@ -806,7 +819,7 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
-  padding-left: 70%;
+  padding-left: 85%;
 }
 .row-bg {
   padding: 10px 0;
