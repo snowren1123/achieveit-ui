@@ -73,12 +73,13 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      projectName: ""
+      projectName: "",
+      projectState: ""
     };
   },
 
   created() {
-    this.getProjectName();
+    this.getProjectNameAndState();
     // if (!this.detailInfo.projectId) this.detailInfo.projectId = this.$route.query.id;
     // console.log(this.detailInfo.projectId);
   },
@@ -97,10 +98,13 @@ export default {
     backToHome() {
       this.$router.push("/home");
     },
-    getProjectName() {
+    getProjectNameAndState() {
       axios.get("/api/project_info/" + this.projectBasicId).then(response => {
         if (response.data.code === 0) {
           this.projectName = response.data.data.projectName;
+          this.projectState = response.data.data.state;
+          this.$store.commit("setProjectBasicState", this.projectState);
+          console.log(this.projectState);
         }
       });
     }

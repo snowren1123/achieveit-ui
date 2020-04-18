@@ -2,50 +2,69 @@
   <el-main>
     <el-tabs type="border-card" style="height: 600px;">
       <el-tab-pane>
-        <span slot="label"><i class="el-icon-help"></i>基本信息</span>
+        <span slot="label">
+          <i class="el-icon-help"></i>基本信息
+        </span>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="2">
             <el-tag type="success" class="tag-property">项目ID</el-tag>
-            {{ basicInfo.projectId }}
           </el-col>
-          <el-col :span="12">
+          <el-col :span="10">{{ basicInfo.projectId }}</el-col>
+          <el-col :span="2">
             <el-tag class="tag-property">采用技术</el-tag>
-            {{ basicInfo.technology }}
           </el-col>
+          <el-col :span="10">{{ basicInfo.technology }}</el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="2">
             <el-tag type="success" class="tag-property">项目名称</el-tag>
-            {{ basicInfo.projectName }}
           </el-col>
-          <el-col :span="12">
+          <el-col :span="10">{{ basicInfo.projectName }}</el-col>
+
+          <el-col :span="2">
             <el-tag class="tag-property">主要功能</el-tag>
-            {{ basicInfo.mainFunctions }}
           </el-col>
+          <el-col :span="10">{{ basicInfo.mainFunctions }}</el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="2">
             <el-tag type="warning" class="tag-property">项目上级</el-tag>
-            {{ basicInfo.projectBossId }}
           </el-col>
-          <el-col :span="12">
+          <el-col :span="10">{{ basicInfo.projectBossId }}</el-col>
+          <el-col :span="2">
             <el-tag class="tag-property">业务领域</el-tag>
-            {{ basicInfo.businessDomain }}
           </el-col>
+          <el-col :span="10">{{ basicInfo.businessDomain }}</el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="2">
             <el-tag type="warning" class="tag-property">项目周期</el-tag>
-            {{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}
           </el-col>
-          <el-col :span="12">
+          <el-col :span="10">{{ basicInfo.expStartDate }} 至 {{ basicInfo.expEndDate }}</el-col>
+          <el-col :span="2">
             <el-tag class="tag-property">主要里程碑</el-tag>
-            {{ basicInfo.milestone }}
           </el-col>
+          <el-col :span="10">{{ basicInfo.milestone }}</el-col>
         </el-row>
         <el-row :gutter="20">
+          <el-col :span="2">
+            <el-tag type="warning" class="tag-property">客户ID</el-tag>
+          </el-col>
+          <el-col :span="10">{{ basicInfo.clientId }}</el-col>
           <div class="grid-content">
-            <el-button round @click="preEditProject()">
+            <el-button
+              v-show="(projectBasicState == '驳回立项') && (roleInProject == '项目经理')"
+              round plain
+              type="danger"
+              @click="deleteProject()"
+            >
+              <i class="el-icon-delete"></i>删除项目
+            </el-button>
+            <el-button
+              v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
+              round
+              @click="preEditProject()"
+            >
               <i class="el-icon-edit"></i>点击此处编辑
             </el-button>
           </div>
@@ -159,7 +178,9 @@
         </el-row>
       </el-tab-pane>
       <el-tab-pane>
-        <span slot="label"><i class="el-icon-table-lamp"></i>项目状态</span>
+        <span slot="label">
+          <i class="el-icon-table-lamp"></i>项目状态<span v-show="projectBasicState == '驳回立项'">：{{ projectBasicState }}</span>
+        </span>
         <el-tag v-show="!editState" v-if="basicInfo.state == '同意立项'">同意立项</el-tag>
         <el-tag v-show="!editState" v-if="basicInfo.state == '进行中'">进行中</el-tag>
         <el-tag type="success" v-show="!editState" v-else-if="basicInfo.state == '申请立项'">申请立项</el-tag>
@@ -218,14 +239,16 @@
         </el-dialog>
       </el-tab-pane>
       <el-tab-pane>
-        <span slot="label"><i class="el-icon-coffee-cup"></i>功能列表</span>
+        <span slot="label">
+          <i class="el-icon-coffee-cup"></i>功能列表
+        </span>
         <el-row>
           <el-tree :data="funcsData" node-key="id" default-expand-all :expand-on-click-node="false">
             <span class="custom-tree-node" slot-scope="{ node, data }">
               <span>{{ node.label }}</span>
               <span style="margin-right: 15px;">
                 <el-button
-                  v-show="(roleInProject == '项目经理') && data.showAdd"
+                  v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理') && data.showAdd"
                   class="mini-btn-set"
                   type="success"
                   icon="el-icon-plus"
@@ -235,7 +258,7 @@
                   plain
                 ></el-button>
                 <el-button
-                  v-show="roleInProject == '项目经理'"
+                  v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                   class="mini-btn-set"
                   type="info"
                   icon="el-icon-edit"
@@ -245,7 +268,7 @@
                   plain
                 ></el-button>
                 <el-button
-                  v-show="roleInProject == '项目经理'"
+                  v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                   class="mini-btn-set"
                   type="danger"
                   icon="el-icon-delete"
@@ -410,7 +433,8 @@ export default {
 
   computed: {
     ...mapState(["projectBasicId"]),
-    ...mapState(["roleInProject"])
+    ...mapState(["roleInProject"]),
+    ...mapState(["projectBasicState"])
   },
 
   methods: {
@@ -428,11 +452,9 @@ export default {
     submitEditProjectForm() {
       console.log(this.basicInfo);
       this.basicInfo.expStartDate = this.dateFormat(
-            this.basicInfo.expStartDate
-          );
-          this.basicInfo.expEndDate = this.dateFormat(
-            this.basicInfo.expEndDate
-          );
+        this.basicInfo.expStartDate
+      );
+      this.basicInfo.expEndDate = this.dateFormat(this.basicInfo.expEndDate);
       this.$refs.editDialogFormRef.validate(async valid => {
         if (!valid) return;
         axios
@@ -784,7 +806,7 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
-  padding-left: 85%;
+  padding-left: 70%;
 }
 .row-bg {
   padding: 10px 0;
@@ -824,6 +846,10 @@ export default {
 
 .el-col-1 {
   margin-right: 15px;
+}
+
+.el-col-10 {
+  padding-top: 3px;
 }
 
 .mini-btn-set {

@@ -19,9 +19,6 @@
             <el-row>
               <el-col>采用技术：{{scope.row.projectBasicInfo.technology}}</el-col>
             </el-row>
-            <el-row>
-              <el-col>项目状态：{{scope.row.projectBasicInfo.state}}</el-col>
-            </el-row>
             <el-tooltip class="item" effect="dark" content="建立配置库" placement="top">
               <el-button
                 icon="el-icon-s-promotion"
@@ -128,7 +125,8 @@ export default {
           key === "outputLink" ||
           key === "milestone" ||
           key === "projectBossId"
-        ) continue;
+        )
+          continue;
         console.log(key);
         this.dataSendedFormat[key] = projArray.projectBasicInfo[key];
       }
@@ -140,16 +138,19 @@ export default {
       );
     },
     setConfigInfo(dataSendedFormat) {
-      console.log(dataSendedFormat);
-      axios
-        .put("/api/newproject/config", qs.stringify(dataSendedFormat))
-        .then(response => {
-          if (response.data.code === 0) {
-            this.$message.success("创建配置库成功！");
-          }
-        });
-      this.configFormVisible = false;
-      this.getConfigSetProjects();
+      this.$refs.configFormRef.validate(async valid => {
+        if (!valid) return;
+        console.log(dataSendedFormat);
+        axios
+          .put("/api/newproject/config", qs.stringify(dataSendedFormat))
+          .then(response => {
+            if (response.data.code === 0) {
+              this.$message.success("创建配置库成功！");
+            }
+          });
+        this.configFormVisible = false;
+        this.getConfigSetProjects();
+      });
     },
     dateFormat: function(originVal) {
       const dt = new Date(originVal);

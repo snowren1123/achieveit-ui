@@ -8,6 +8,7 @@ export default new Vuex.Store({
         personId: {},
         personTitle: {},
         projectBasicId: {},
+        projectBasicState: {},
         roleInProject: {},
         checkTimeSheetTotal: 0
     },
@@ -20,6 +21,9 @@ export default new Vuex.Store({
         },
         setProjectBasicId(state, projectId) {
             state.projectBasicId = projectId;
+        },
+        setProjectBasicState(state, projectState){
+            state.projectBasicState = projectState;
         },
         setRoleInProject(state, projectRole){
             state.roleInProject = projectRole;

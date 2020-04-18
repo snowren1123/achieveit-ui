@@ -50,8 +50,8 @@ export default {
   data() {
     return {
       loginInfo: {
-        user: "542581960@qq.com",
-        password: "abcd333"
+        user: "wy001",
+        password: "123456"
       }
     };
   },
