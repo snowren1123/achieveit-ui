@@ -87,7 +87,11 @@
           <el-table-column prop="lastVerifyDate" label="上次核对" sortable="custom">
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column label="操作" width="95">
+          <el-table-column
+            label="操作"
+            width="95"
+            v-if="(projectBasicState == '进行中') || (projectBasicState == '已交付')"
+          >
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
@@ -137,7 +141,10 @@
         ></el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane v-if="roleInProject == '项目经理'" label="分配设备">
+      <el-tab-pane
+        v-if="((projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
+        label="分配设备"
+      >
         <span slot="label">
           <i class="el-icon-circle-plus-outline"></i> 分配设备
         </span>
@@ -179,26 +186,6 @@
               style="width:217px;"
             ></el-input>
           </el-form-item>
-          <!-- 
-          <el-form-item label="分配日期" prop="checkinDate">
-            <el-date-picker
-              type="datetime"
-              placeholder="分配日期"
-              v-model="newDeviceInfo.checkinDate"
-              style="width:217px;"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item label="上次核对" prop="lastVerifyDate">
-            <el-date-picker
-              type="datetime"
-              placeholder="上次核对"
-              v-model="newDeviceInfo.lastVerifyDate"
-              style="width:217px;"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            ></el-date-picker>
-          </el-form-item>
-          -->
         </el-form>
         <el-button type="primary" @click="submitForm()">确认</el-button>
       </el-tab-pane>
@@ -258,8 +245,12 @@ export default {
     this.getProjectMembers();
   },
   computed: {
-    ...mapState(["projectBasicId", "personId"]),
-    ...mapState(["roleInProject"])
+    ...mapState([
+      "projectBasicId",
+      "personId",
+      "roleInProject",
+      "projectBasicState"
+    ])
   },
   methods: {
     // 分页方法

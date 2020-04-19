@@ -37,42 +37,6 @@
           <el-table-column prop="lastVerifyDate" label="上次核对">
             <template slot-scope="scope">{{scope.row.lastVerifyDate.slice(0,10)}}</template>
           </el-table-column>
-          <el-table-column label="操作" width="95">
-            <template slot-scope="scope">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="核对"
-                placement="top"
-                v-if="scope.row.returnDate == null"
-              >
-                <el-button
-                  type="success"
-                  icon="el-icon-edit"
-                  size="mini"
-                  circle
-                  plain
-                  @click="checkDevice(scope.row)"
-                ></el-button>
-              </el-tooltip>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="归还"
-                placement="top"
-                v-if="scope.row.returnDate == null"
-              >
-                <el-button
-                  type="danger"
-                  icon="el-icon-check"
-                  size="mini"
-                  circle
-                  plain
-                  @click="returnDevice(scope.row)"
-                ></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
         </el-table>
 
         <!-- 分页区域 -->
@@ -134,32 +98,6 @@ export default {
           this.filterMyDeviceList(this.myFilters);
         } else {
           this.$message.error("获取我的设备列表失败！");
-        }
-      });
-    },
-
-    // 核对设备
-    checkDevice(tempDevice) {
-      axios.put("/api/device/check", tempDevice).then(response => {
-        console.log(response);
-        if (response.data.code == 0) {
-          this.$message.success("核对设备成功");
-          this.getMyDeviceList();
-        } else {
-          this.$message.error("核对设备失败");
-        }
-      });
-    },
-
-    // 归还设备
-    returnDevice(tempDevice) {
-      axios.put("/api/device/return", tempDevice).then(response => {
-        console.log(response);
-        if (response.data.code == 0) {
-          this.$message.success("归还设备成功");
-          this.getMyDeviceList();
-        } else {
-          this.$message.error("归还设备失败");
         }
       });
     },
