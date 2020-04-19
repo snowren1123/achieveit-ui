@@ -43,7 +43,11 @@
               <el-tag v-if="scope.row.state == '打回'" type="danger">{{scope.row.state}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="135">
+          <el-table-column
+            label="操作"
+            width="135"
+            v-if="(projectBasicState == '进行中') || (projectBasicState == '已交付')"
+          >
             <template slot-scope="scope">
               <el-tooltip
                 class="item"
@@ -118,8 +122,8 @@
           @sort-change="sortTimesheetList1"
           stripe
         >
-          <el-table-column prop="employeeId" label="员工ID" width="90" sortable="custom"></el-table-column>
-          <el-table-column prop="projectId" label="项目ID" width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="employeeId" label="员工ID" sortable="custom"></el-table-column>
+          <el-table-column prop="projectId" label="项目ID" sortable="custom"></el-table-column>
           <el-table-column label="功能模块">
             <template
               slot-scope="scope"
@@ -136,7 +140,11 @@
               slot-scope="scope"
             >{{scope.row.startTime.slice(0,5)}} 至 {{scope.row.endTime.slice(0,5)}}</template>
           </el-table-column>
-          <el-table-column label="操作" width="95">
+          <el-table-column
+            label="操作"
+            width="95"
+            v-if="(projectBasicState == '进行中') || (projectBasicState == '已交付')"
+          >
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" content="通过" placement="top">
                 <el-button
@@ -174,7 +182,7 @@
         ></el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane label="新增工时">
+      <el-tab-pane label="新增工时" v-if="(projectBasicState == '进行中') || (projectBasicState == '已交付')">
         <span slot="label">
           <i class="el-icon-circle-plus-outline"></i>新增工时
         </span>
@@ -184,6 +192,7 @@
           label-position="left"
           :rules="addDialogFormRules"
           ref="addDialogFormRef"
+          v-if="permission==1"
         >
           <el-form-item label="一级功能" prop="primaryFunction">
             <el-select
@@ -243,8 +252,14 @@
             ></el-time-picker>
           </el-form-item>
         </el-form>
-        <el-button type="warning" @click="submitToBoss()">确认提交</el-button>
-        <el-button type="primary" @click="saveAsDraft()">存为草稿</el-button>
+        <el-button type="warning" @click="submitToBoss()" v-if="permission==1">确认提交</el-button>
+        <el-button type="primary" @click="saveAsDraft()" v-if="permission==1">存为草稿</el-button>
+        <el-alert
+          title="您没有新增工时的权限，如果需要，请私下向项目经理申请分配权限！"
+          :closable="false"
+          type="info"
+          v-if="permission==0"
+        ></el-alert>
       </el-tab-pane>
     </el-tabs>
 
@@ -385,11 +400,14 @@ export default {
       currentPage1: 1,
       pageSize1: 6,
       total1: 0,
-      col1: {}
+      col1: {},
+
+      permission: 0
     };
   },
   created() {
     this.timesheetInfo.projectId = this.projectBasicId;
+    this.getHavePermission();
     this.getTimeSheetList();
     this.getTimeSheetList1();
     this.getPrimaryFunctions();
@@ -404,6 +422,19 @@ export default {
     ])
   },
   methods: {
+    // 工时权限
+    getHavePermission() {
+      axios
+        .get("/api/timesheet/havapermission/" + this.projectBasicId)
+        .then(response => {
+          console.log(response);
+          if (response.data.code === 0) {
+            this.permission = response.data.data;
+          } else {
+            this.$message.error("失败！");
+          }
+        });
+    },
     // 分页方法
     handleSizeChange(val) {
       this.pageSize = val;
