@@ -644,7 +644,7 @@ export default {
           this.nextStateOpt = response.data.data;
         } else {
           if (this.roleInProject == "项目经理") {
-            this.$message.warning("无法获取该项目下一个可变更状态！");
+            console.log("无法获取该项目下一个可变更状态！");
           }
         }
       });
