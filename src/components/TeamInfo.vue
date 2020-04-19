@@ -50,7 +50,7 @@
       </template>
       <template>
         <el-col :span="8">
-          <el-card shadow="hover" class="add_card" v-show="roleInProject == '项目经理'">
+          <el-card shadow="hover" class="add_card" v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')">
             <i class="el-icon-plus add_icon" @click="addMemberDialogShow"></i>
           </el-card>
         </el-col>
