@@ -19,6 +19,7 @@ import MyDevice from '../components/MyDevice.vue'
 import ProjectList from '../components/ProjectList.vue'
 import BasicTimeSheet from '../components/BasicTimeSheet.vue'
 import CheckTimeSheet from '../components/CheckTimeSheet.vue'
+import TimeSheet from '../components/TimeSheet.vue'
 
 import BasicReviewInfo from '../components/BasicReviewInfo.vue'
 import MyReportReview from '../components/MyReportReview.vue'
@@ -137,6 +138,10 @@ export default new Router({
                 {
                     path: 'RiskManagement',
                     component: RiskManagement
+                },
+                {
+                    path: 'TimeSheet',
+                    component: TimeSheet
                 }
             ]
         }

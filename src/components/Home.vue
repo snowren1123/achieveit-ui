@@ -36,23 +36,19 @@
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
-              <el-badge :value="checkTimeSheetTotal" class="item">
-                <i class="el-icon-date"></i>工时管理
-              </el-badge>
+              <i class="el-icon-date"></i>工时管理
             </template>
             <el-menu-item-group>
               <template slot="title">查看工时</template>
               <el-menu-item index="/home/basictimesheet">
                 <i class="el-icon-timer"></i>我的工时
               </el-menu-item>
-              <el-menu-item index="/home/checktimesheet">
-                <el-badge :value="checkTimeSheetTotal" class="item">
-                  <i class="el-icon-finished"></i>工时审批
-                </el-badge>
-              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="3" v-show="(personTitle.indexOf('测试') != -1) || (personTitle.indexOf('开发') != -1)">
+          <el-submenu
+            index="3"
+            v-show="(personTitle.indexOf('测试') != -1) || (personTitle.indexOf('开发') != -1)"
+          >
             <template slot="title">
               <i class="el-icon-data-analysis"></i>评审缺陷
             </template>
@@ -110,7 +106,7 @@ export default {
   data() {
     return {
       personInfo: {},
-      personTitle: ''
+      personTitle: ""
     };
   },
   created() {

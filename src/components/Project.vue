@@ -9,12 +9,7 @@
 
     <el-container>
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-        <el-menu
-          :default-active="this.$route.path"
-          @open="handleOpen"
-          @close="handleClose"
-          router
-        >
+        <el-menu :default-active="this.$route.path" @open="handleOpen" @close="handleClose" router>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-message"></i>项目信息
@@ -25,13 +20,19 @@
                 <i class="el-icon-info"></i>属性信息
               </el-menu-item>
             </el-menu-item-group>
-            <el-menu-item-group title="Members" v-show="(projectState != '申请立项') && (projectState != '驳回立项')">
+            <el-menu-item-group
+              title="Members"
+              v-show="(projectState != '申请立项') && (projectState != '驳回立项')"
+            >
               <el-menu-item index="/project/team">
                 <i class="el-icon-user"></i>成员管理
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <el-submenu index="2" v-show="(projectState != '申请立项') && (projectState != '驳回立项') && (projectState != '同意立项')">
+          <el-submenu
+            index="2"
+            v-show="(projectState != '申请立项') && (projectState != '驳回立项') && (projectState != '同意立项')"
+          >
             <template slot="title">
               <i class="el-icon-brush"></i>项目操作
             </template>
@@ -52,6 +53,13 @@
               <el-menu-item index="/project/projectdevice">
                 <template slot="title">
                   <i class="el-icon-printer"></i>设备管理
+                </template>
+              </el-menu-item>
+            </el-menu-item-group>
+            <el-menu-item-group title="Timesheet">
+              <el-menu-item index="/project/timesheet">
+                <template slot="title">
+                  <i class="el-icon-timer"></i>工时管理
                 </template>
               </el-menu-item>
             </el-menu-item-group>

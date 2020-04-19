@@ -6,11 +6,13 @@
         <el-col :span="8">
           <div style="font-size:18px">我的工时列表</div>
         </el-col>
+        <!--
         <el-col :span="3">
           <el-button type="primary" @click="addTimeSheet" plain round>
             <i class="el-icon-plus"></i>新增
           </el-button>
         </el-col>
+        -->
       </el-row>
       <!-- 工时列表区域 -->
       <el-table
@@ -19,7 +21,7 @@
         @sort-change="sortTimesheetList"
         stripe
       >
-        <el-table-column prop="projectId" label="项目ID" width="140" sortable="custom"></el-table-column>
+        <el-table-column prop="projectId" label="项目ID" sortable="custom"></el-table-column>
         <el-table-column label="功能模块">
           <template
             slot-scope="scope"
@@ -30,8 +32,8 @@
             slot-scope="scope"
           >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
         </el-table-column>
-        <el-table-column prop="date" label="日期" width="120" sortable="custom"></el-table-column>
-        <el-table-column label="时间" width="140">
+        <el-table-column prop="date" label="日期" sortable="custom"></el-table-column>
+        <el-table-column label="时间">
           <template
             slot-scope="scope"
           >{{scope.row.startTime.slice(0,5)}} 至 {{scope.row.endTime.slice(0,5)}}</template>
@@ -39,7 +41,6 @@
         <el-table-column
           prop="state"
           label="状态"
-          width="80"
           :filters="[{ text: '草稿', value: '草稿' }, { text: '已提交', value: '已提交' },{ text: '已确认', value: '已确认' },{ text: '打回', value: '打回' }]"
           :column-key="'state'"
           filter-placement="bottom-end"
@@ -51,6 +52,7 @@
             <el-tag v-if="scope.row.state == '打回'" type="danger">{{scope.row.state}}</el-tag>
           </template>
         </el-table-column>
+        <!--
         <el-table-column label="操作" width="135">
           <template slot-scope="scope">
             <el-tooltip
@@ -103,6 +105,7 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        -->
       </el-table>
 
       <!-- 分页区域 -->
