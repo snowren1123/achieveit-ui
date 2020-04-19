@@ -7,7 +7,7 @@
             <div slot="header" class="clearfix">
               <span>{{ member.employeeName }}</span>
               <el-button
-                v-show="roleInProject == '项目经理'"
+                v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                 icon="el-icon-delete"
                 circle
                 style="float: right"
@@ -17,7 +17,7 @@
                 @click="deleteMember(member.employeeId)"
               ></el-button>
               <el-button
-                v-show="roleInProject == '项目经理'"
+                v-show="((projectBasicState == '同意立项') || (projectBasicState == '进行中') || (projectBasicState == '已交付')) && (roleInProject == '项目经理')"
                 icon="el-icon-edit"
                 circle
                 style="float: right; margin-right: 6px"
@@ -235,7 +235,8 @@ export default {
 
   computed: {
     ...mapState(["projectBasicId"]),
-    ...mapState(["roleInProject"])
+    ...mapState(["roleInProject"]),
+    ...mapState(["projectBasicState"])
   },
 
   methods: {
@@ -303,13 +304,15 @@ export default {
     addMemberDialogShow() {
       this.memberInfo.projectId = this.projectBasicId;
 
-      axios.get("/api/addibleEmployee/" + this.projectBasicId).then(response => {
-        if (response.data.code === 0) {
-          this.employees = response.data.data;
-        } else {
-          this.$message.error("获取可选人员失败！");
-        }
-      });
+      axios
+        .get("/api/addibleEmployee/" + this.projectBasicId)
+        .then(response => {
+          if (response.data.code === 0) {
+            this.employees = response.data.data;
+          } else {
+            this.$message.error("获取可选人员失败！");
+          }
+        });
 
       axios.get("/api/role").then(response => {
         if (response.data.code === 0) {
