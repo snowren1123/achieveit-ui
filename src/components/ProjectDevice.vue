@@ -330,7 +330,6 @@ export default {
       this.newDeviceInfo.projectId = this.projectBasicId;
 
       console.log(this.newDeviceInfo);
-      return;
       axios.post("/api/device", this.newDeviceInfo).then(response => {
         console.log(response);
         if (response.data.code == 0) {
