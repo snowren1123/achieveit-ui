@@ -104,6 +104,7 @@
                 v-model="projectInfo.expStartDate"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
+                :picker-options="startDatePicker"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -116,6 +117,7 @@
                 v-model="projectInfo.expEndDate"
                 style="width: 100%;"
                 value-format="yyyy-MM-dd"
+                :picker-options="endDatePicker"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -205,7 +207,27 @@ export default {
       currentPage: 1,
       pageSize: 3,
       total: 0,
-      keyWord: ""
+      keyWord: "",
+
+      startDatePicker: {
+        disabledDate: time => {
+          var endDateVal = this.projectInfo.expEndDate;
+          return (
+            time.getTime() > new Date(endDateVal).getTime() ||
+            (time.getTime() < new Date().getTime() - 1 * 24 * 60 * 60 * 1000)
+          );
+        }
+      },
+      endDatePicker: {
+        disabledDate: time => {
+          var startDateVal = this.projectInfo.expStartDate;
+          return (
+            time.getTime() <
+              new Date(startDateVal).getTime() - 1 * 24 * 60 * 60 * 1000 ||
+            (time.getTime() < new Date().getTime() - 1 * 24 * 60 * 60 * 1000)
+          );
+        }
+      }
     };
   },
   created() {
@@ -239,14 +261,14 @@ export default {
       this.$store.commit("setProjectBasicId", id);
       var roleInProject = "";
       axios.get("/api/memberinfo/" + id).then(response => {
-        if(response.data.code === 0){
+        if (response.data.code === 0) {
           roleInProject = response.data.data.role;
           this.$store.commit("setRoleInProject", roleInProject);
           console.log(roleInProject);
         } else {
-          this.$message.error("无法获取用户在项目中信息！")
+          this.$message.error("无法获取用户在项目中信息！");
         }
-      })
+      });
     },
     getProjectsList() {
       axios.get("/api/project_infos").then(response => {

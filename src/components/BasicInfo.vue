@@ -118,6 +118,7 @@
                       v-model="basicInfo.expStartDate"
                       style="width: 100%;"
                       value-format="yyyy-MM-dd"
+                      :picker-options="startDatePicker"
                     ></el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -130,6 +131,7 @@
                       v-model="basicInfo.expEndDate"
                       style="width: 100%;"
                       value-format="yyyy-MM-dd"
+                      :picker-options="endDatePicker"
                     ></el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -380,6 +382,22 @@ export default {
             trigger: "change"
           }
         ]
+      },
+      startDatePicker: {
+        disabledDate: time => {
+          var endDateVal = this.basicInfo.expEndDate;
+          if(endDateVal) {
+            return time.getTime() > new Date(endDateVal).getTime();
+          }
+        }
+      }, 
+      endDatePicker: {
+        disabledDate: time => {
+          var startDateVal = this.basicInfo.expStartDate;
+          if(startDateVal) {
+            return (time.getTime() < new Date(startDateVal).getTime()-1*24*60*60*1000);
+          }
+        }
       },
       excelFileList: [],
       clientIds: [],
