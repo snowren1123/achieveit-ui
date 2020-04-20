@@ -134,7 +134,7 @@
               slot-scope="scope"
             >{{scope.row.primaryActivity}} / {{scope.row.secondaryActivity}}</template>
           </el-table-column>
-          <el-table-column prop="date" label="日期" width="120" sortable="custom"></el-table-column>
+          <el-table-column prop="date" label="日期" width="140" sortable="custom"></el-table-column>
           <el-table-column label="时间" width="140">
             <template
               slot-scope="scope"
@@ -559,9 +559,9 @@ export default {
     },
     addDialogClosed() {
       this.$refs.addDialogFormRef.resetFields();
-      for (var item in this.timesheetInfo) {
-        this.timesheetInfo[item] = "";
-      }
+      // for (var item in this.timesheetInfo) {
+      //   this.timesheetInfo[item] = "";
+      // }
     },
     submitToBoss() {
       this.$refs.addDialogFormRef.validate(async valid => {
