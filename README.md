@@ -1,6 +1,9 @@
 # achieveit
 
 > project practice
+“AchieveIt” —— 软件项目管理系统，前端源代码。
+采用技术Vue.js + Element-ui + axios + vuex + qs ...
+内含项目基本信息 / 功能列表 / 人员 / 工时 / 风险 / 缺陷 / 设备等众多模块管理。
 
 ## Build Setup
 
