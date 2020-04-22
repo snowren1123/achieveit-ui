@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       loginInfo: {
-        user: "wy001",
+        user: "manager001",
         password: "123456"
       }
     };
